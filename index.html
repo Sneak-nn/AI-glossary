@@ -1142,6 +1142,128 @@ const glossary = [
     analogy: "GitHub 是 Agent 的「身份证+档案柜+快递员」——登录时确认身份，干活时存代码，干完活自动发货上线。",
     related: ["AI Agent", "Codex", "Claude Code"]
   }
+  },
+  {
+    id: "git",
+    term: "Git",
+    fullName: "Git · 分布式版本控制系统",
+    category: "基础概念",
+    importance: "核心",
+    letter: "G",
+    definition: "最流行的版本控制系统。记录文件的每一次修改，让你能随时回到历史版本、对比改动、多人同时协作不冲突。GitHub 本质上是 Git 的「云端存储服务」——Git 是工具，GitHub 是平台。你在本地用 Git 记录版本，推送到 GitHub 分享和备份。",
+    analogy: "Git 是「时光机+草稿纸」——每次 Commit 就像拍一张快照，随时可以回到过去的任何一个版本。GitHub 是把这些快照存到云端的相册。",
+    related: ["GitHub", "Commit", "仓库"]
+  },
+  {
+    id: "github",
+    term: "GitHub",
+    fullName: "GitHub · 代码托管与协作平台",
+    category: "工具/软件",
+    importance: "核心",
+    letter: "G",
+    definition: "全球最大的代码托管平台，基于 Git。核心功能：①仓库（Repository）——存放代码项目；②版本控制——记录每次修改；③Pull Request——代码审查和讨论；④GitHub Actions——自动化测试/部署；⑤GitHub Pages——免费静态网站托管。被微软收购。几乎所有 AI Agent（Codex、Claude Code 等）都把 GitHub 作为默认的代码存放和协作平台。",
+    analogy: "GitHub 是程序员界的「百度网盘+石墨文档」——既能存代码，又能多人协作，还能自动运行测试和部署。你这次的 AI 知识库网站就托管在 GitHub Pages 上。",
+    related: ["Git", "仓库", "GitHub Actions", "GitHub Pages", "Pull Request", "GitHub Token"]
+  },
+  {
+    id: "repository",
+    term: "仓库 / Repository",
+    fullName: "Repository · 代码仓库",
+    category: "基础概念",
+    importance: "核心",
+    letter: "C",
+    definition: "GitHub 上存放一个项目的「文件夹」。包含项目的所有代码文件、历史版本记录、分支等。每个仓库有独立的 URL（如 github.com/用户名/仓库名），可以设定为公开（Public）或私有（Private）。你的 AI 知识库就在 github.com/Sneak-nn/AI-glossary 这个仓库里。",
+    analogy: "仓库 = 项目的「档案室」。里面不仅有当前的文件，还有从项目第一天到现在的每一版修改记录。公开仓库谁都能看，私有仓库只有你和授权的人能访问。",
+    related: ["Git", "GitHub", "Commit", "Branch"]
+  },
+  {
+    id: "commit",
+    term: "Commit",
+    fullName: "Commit · 提交",
+    category: "基础概念",
+    importance: "核心",
+    letter: "C",
+    definition: "Git 中的「保存」操作。每次 Commit 会记录：改了什么文件、谁改的、什么时候、为什么要改（提交信息）。每个 Commit 有唯一的 ID（如 b63f808），可以随时回到这个版本。在 AI 工作流中，Agent 每完成一个任务就会自动 Commit 一次。",
+    analogy: "Commit = 打游戏时的「存档点」。每个存档记录了当时的完整状态，打 boss 前存一个，打输了就读档重来。代码改坏了，回退到上一个 Commit 就行。",
+    related: ["Git", "仓库", "Push", "Branch"]
+  },
+  {
+    id: "branch",
+    term: "Branch / 分支",
+    fullName: "Branch · 分支",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "F",
+    definition: "Git 中从主线上「分叉」出来的独立开发线。默认分支通常叫 main 或 master。做新功能时从 main 分出 feature 分支，改完测试通过后再合并回去。这样主分支始终保持稳定，不会因为开发中的代码搞崩整个项目。",
+    analogy: "分支 = RPG 游戏的「平行剧情线」。主线是正式版，你可以开一条分支去尝试新的剧情（新功能），如果好玩就合并回主线，不好玩就删掉分支，主线不受任何影响。",
+    related: ["Git", "Commit", "Pull Request"]
+  },
+  {
+    id: "push-pull",
+    term: "Push & Pull",
+    fullName: "Push · 推送 / Pull · 拉取",
+    category: "基础概念",
+    importance: "核心",
+    letter: "P",
+    definition: "Git 中本地和远程仓库同步的两个操作。Push（推送）= 把本地修改上传到 GitHub，让别人能看到你的更新。Pull（拉取）= 把 GitHub 上别人的更新下载到本地，让你的代码保持最新。你刚才的「部署到 GitHub Pages」就是一次 Push 操作。",
+    analogy: "Push = 把本地写好的文件发到云盘。Pull = 从云盘下载别人更新的文件。只有 Push 之后，GitHub Pages 才能看到你最新的网页代码。",
+    related: ["Git", "GitHub", "Commit", "仓库"]
+  },
+  {
+    id: "github-token",
+    term: "GitHub Token",
+    fullName: "GitHub Personal Access Token · 个人访问令牌",
+    category: "基础概念",
+    importance: "核心",
+    letter: "G",
+    definition: "GitHub 的「临时密码」。因为 GitHub 不再支持直接用账号密码做 Git 操作和 API 调用，必须用 Token 代替密码来证明身份。Token 可以设定权限范围（如只允许操作仓库）、有效期（到期自动失效）。分两种：Fine-grained（细粒度，精确到单个仓库）和 Classic（经典，权限较宽）。用完应立即删除。",
+    analogy: "GitHub Token = 酒店房卡。不是你的身份证（GitHub 账号密码），而是一张有期限、有权限范围的临时通行证。只能进你授权的房间（仓库），到期自动失效，丢了可以远程注销。你刚才给我的 ghp_ 开头的就是 Classic Token。",
+    related: ["GitHub", "GitHub API", "Push"]
+  },
+  {
+    id: "github-actions",
+    term: "GitHub Actions",
+    fullName: "GitHub Actions · 自动化流水线",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "G",
+    definition: "GitHub 内置的自动化引擎。每当代码 Push 到仓库，可以自动触发一系列任务：运行测试、检查代码质量、构建应用、部署到服务器等。在 AI 工作流中，Agent 写完代码推送到 GitHub，Actions 自动验证代码没有 Bug，通过后自动部署上线——全程无需人工干预。",
+    analogy: "GitHub Actions = 工厂的「自动化流水线」。你把原料（代码）放上传送带（Push），机器自动完成质检（跑测试）、包装（构建）、发货（部署）——你只需要在起点放料，终点收货。",
+    related: ["GitHub", "Push", "仓库", "GitHub Pages"]
+  },
+  {
+    id: "github-pages",
+    term: "GitHub Pages",
+    fullName: "GitHub Pages · 静态网站托管",
+    category: "基础概念",
+    importance: "核心",
+    letter: "G",
+    definition: "GitHub 提供的免费静态网站托管服务。只要把 HTML/CSS/JS 文件放到仓库里，开启 GitHub Pages，就能获得一个 username.github.io/repo 的永久网址。适合托管个人主页、文档站、项目展示页。你的 AI 知识库（sneak-nn.github.io/AI-glossary）就部署在 GitHub Pages 上。",
+    analogy: "GitHub Pages = 免费的「沿街店面」。你把做好的网页文件放到 GitHub 仓库里，GitHub 就给你一个门牌号（网址），全球任何人都能访问。不需要租服务器、不需要备案。",
+    related: ["GitHub", "仓库", "GitHub Actions", "Push"]
+  },
+  {
+    id: "pull-request",
+    term: "Pull Request / PR",
+    fullName: "Pull Request · 拉取请求",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "P",
+    definition: "GitHub 上的代码审查和合并机制。开发者在分支上改完代码后，发起 Pull Request 请求将改动合并到主分支。PR 页面可以逐行查看改动、讨论、打回修改，审批通过后点一下按钮就合并。在 AI 工作流中，Agent 可以自动创建 PR，人类只需审查后点「合并」即可。",
+    analogy: "Pull Request = 「提案+审批」流程。你改了一部分代码，发起 PR 就是提交提案，同事（或你自己）审阅后批准，代码才正式并入主线。就像写文章先发草稿给编辑审，通过了才发表。",
+    related: ["GitHub", "Branch", "Commit", "仓库"]
+  },
+  {
+    id: "github-api",
+    term: "GitHub API",
+    fullName: "GitHub API · 编程接口",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "G",
+    definition: "让程序直接操作 GitHub 的接口。通过 API 可以不用打开网页，用代码创建仓库、管理 Issues、触发 Actions、查询代码等。AI Agent（如 Codex）就通过 GitHub API 来读写仓库、创建 PR、查看代码变更。调用 API 需要用 GitHub Token 认证，按请求数量有频率限制。",
+    analogy: "GitHub API = GitHub 的「后门通道」。普通人走前门（网页），程序走后门（API）。Agent 不可能打开浏览器手动点按钮，它通过 API 发送指令来操作 GitHub 上的一切。你刚才开启 GitHub Pages 就是我通过 API 一键完成的。",
+    related: ["GitHub", "GitHub Token", "API", "AI Agent"]
+  }
 ];
 
 const tools = [
