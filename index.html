@@ -126,41 +126,6 @@ body {
   background: var(--accent-dim);
 }
 
-.nav-search {
-  margin-left: auto;
-  position: relative;
-}
-
-.nav-search input {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 7px 14px 7px 36px;
-  font-size: 0.8125rem;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  width: 200px;
-  transition: all 0.2s ease;
-  outline: none;
-}
-
-.nav-search input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-glow);
-  width: 260px;
-}
-
-.nav-search input::placeholder { color: var(--text-tertiary); }
-
-.nav-search-icon {
-  position: absolute;
-  left: 12px; top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-tertiary);
-  font-size: 0.875rem;
-  pointer-events: none;
-}
-
 /* ── Hero ── */
 .hero {
   padding: 120px 24px 64px;
@@ -191,6 +156,7 @@ body {
 }
 
 .hero h1 {
+  margin: 0 auto;
   font-family: var(--font-display);
   font-size: clamp(2rem, 5vw, 3.25rem);
   font-weight: 700;
@@ -216,6 +182,7 @@ body {
   display: flex;
   gap: 32px;
   margin-top: 32px;
+  justify-content: center;
 }
 
 .hero-stat {
@@ -691,21 +658,6 @@ body {
   .nav-inner { padding: 0 16px; gap: 4px; }
   .nav-brand { margin-right: 8px; font-size: 1rem; }
   .nav-link { padding: 6px 10px; font-size: 0.8125rem; }
-  .nav-search input { width: 120px; }
-  .nav-search input:focus { width: 160px; }
-  .hero { padding: 100px 16px 48px; }
-  .hero h1 { font-size: 1.75rem; }
-  .hero-stats { gap: 20px; flex-wrap: wrap; }
-  .section { padding: 0 16px 56px; }
-  .section-divider { margin: 0 16px 56px; }
-  .cat-grid { grid-template-columns: 1fr; }
-  .az-letter { width: 30px; height: 30px; font-size: 0.75rem; }
-  .modal { margin: 16px; max-height: 80dvh; }
-  .graph-container { padding: 16px; }
-}
-
-@media (max-width: 480px) {
-  .nav-search { display: none; }
   .nav-links { gap: 0; }
 }
 </style>
@@ -725,10 +677,6 @@ body {
       <a href="#compare" class="nav-link" data-nav="compare">对比</a>
       <a href="#graph" class="nav-link" data-nav="graph">图谱</a>
     </div>
-    <div class="nav-search">
-      <span class="nav-search-icon">⌕</span>
-      <input type="text" id="searchInput" placeholder="搜索词条..." autocomplete="off">
-    </div>
   </div>
 </nav>
 
@@ -736,7 +684,10 @@ body {
 <header class="hero">
   <div class="hero-label">持续更新中</div>
   <h1>从零开始理解 <span>AI</span>，一张页面就够了</h1>
-  <p>为你整理了与AI相关的所有基础概念、公司和工具。深色科技风，双击即用，任何设备都能打开。</p>
+  <div class="hero-search">
+    <span class="hero-search-icon">⌕</span>
+    <input type="text" id="searchInput" placeholder="搜索词条，例如：Token、GitHub、Agent..." autocomplete="off">
+  </div>
   <div class="hero-stats">
     <div class="hero-stat">
       <span class="hero-stat-value" id="statTerms">0</span>
@@ -841,7 +792,7 @@ const glossary = [
     category: "基础概念",
     importance: "核心",
     letter: "L",
-    definition: "AI 的「大脑」本身——一个被喂了几万亿字训练出来的巨型数学公式。ChatGPT 背后是 GPT，Google AI Studio 背后是 Gemini，PieBox 背后是 Claude。LLM 是发动机，ChatGPT / PieBox 是装了这台发动机的车。",
+    definition: "AI 的「大脑」本身——一个被喂了几万亿字训练出来的巨型数学公式。ChatGPT 背后是 GPT，Google AI Studio 背后是 Gemini，LLM 是发动机，ChatGPT 是装了这台发动机的车。",
     analogy: "LLM 是一台发动机，ChatGPT 是装了这台发动机的汽车。发动机决定性能上限，汽车决定好不好开。",
     related: ["Token", "模型", "推理", "Prompt"]
   },
@@ -885,7 +836,7 @@ const glossary = [
     category: "基础概念",
     importance: "核心",
     letter: "A",
-    definition: "Agent = 不只是回答问题，还能动手干活。对话式 AI 只告诉你「应该这样做」，Agent 直接帮你把文件创建好、代码写好、网页跑起来。它能连环操作、能纠错、能重试。Codex、Claude Code、PieBox 都是 Agent。",
+    definition: "Agent = 不只是回答问题，还能动手干活。对话式 AI 只告诉你「应该这样做」，Agent 直接帮你把文件创建好、代码写好、网页跑起来。它能连环操作、能纠错、能重试。Codex、Claude Code 都是 Agent。",
     analogy: "对话式 AI 是顾问（只给建议），AI Agent 是雇来的员工（直接干活出结果）。你说「做个网页」，Agent 从创建文件到写好代码到预览上线全包了。",
     related: ["Vibe Coding", "Skill", "LLM", "Prompt"]
   },
@@ -1061,7 +1012,7 @@ const glossary = [
     category: "公司",
     importance: "核心",
     letter: "A",
-    definition: "由前 OpenAI 员工创立的 AI 公司，主打「安全」和「对齐」。开发了 Claude 模型系列和 Claude Code（AI 编程 Agent）。在编码能力和长文本处理方面与 OpenAI 激烈竞争。PieBox 背后使用的就是 Claude 模型。",
+    definition: "由前 OpenAI 员工创立的 AI 公司，主打「安全」和「对齐」。开发了 Claude 模型系列和 Claude Code（AI 编程 Agent）。在编码能力和长文本处理方面与 OpenAI 激烈竞争。",
     analogy: "Anthropic 是 AI 行业的「一加手机」——技术追求极致，粉丝忠诚度高，在特定领域（安全+编码）有独特优势。",
     related: ["Claude Code", "LLM", "OpenAI"]
   },
@@ -1108,17 +1059,6 @@ const glossary = [
     definition: "Anthropic 的 AI 编程 Agent，Codex 的直接竞争对手。功能相似——读代码、写代码、跑命令、修 Bug、部署。CLI 开源，支持 VS Code 和 JetBrains。需 Claude Pro $20/月。特色是 CLAUDE.md 指令文件和并行 Agent。",
     analogy: "Claude Code 和 Codex 是「两家竞争的外包公司」——干的活一样，但「企业文化」（安全理念、模型风格）不同。选哪个取决于你更信 OpenAI 还是 Anthropic。",
     related: ["Anthropic", "Codex", "Vibe Coding", "AI Agent"]
-  },
-  {
-    id: "piebox",
-    term: "PieBox",
-    fullName: "PieBox · AI 开发平台",
-    category: "工具/软件",
-    importance: "核心",
-    letter: "P",
-    definition: "内置 AI 的在线开发环境。跟 Codex 一样的 Agent 能力——读代码、写代码、创建文件、运行命令、预览网页，全在一个浏览器窗口里完成。**不需要付费、不需要 API Key、不需要装任何东西。** 背后使用 Claude 模型。你现在就在 PieBox 里。",
-    analogy: "PieBox = Codex 的能力 + Google AI Studio 的零门槛。没有付费墙、没有手机验证、没有外币卡。打开浏览器就能 Vibe Coding。",
-    related: ["AI Agent", "Vibe Coding", "Codex", "Claude Code"]
   },
   {
     id: "gemini",
@@ -1271,7 +1211,6 @@ const tools = [
   { name: "Codex", company: "OpenAI", type: "编码 Agent", chat: true, code: "完整工程", files: true, cmds: true, deploy: true, free: "❌ 无", price: "$20/月起", install: true, phone: "桌面端强制" },
   { name: "Google AI Studio", company: "Google", type: "在线工作台", chat: true, code: "完整应用", files: false, cmds: false, deploy: "Firebase", free: "✅ 有", price: "API 按量付费", install: false, phone: "不要" },
   { name: "Claude Code", company: "Anthropic", type: "编码 Agent", chat: true, code: "完整工程", files: true, cmds: true, deploy: true, free: "❌ 无", price: "$20/月起", install: true, phone: "注册需要" },
-  { name: "PieBox", company: "PieBox", type: "在线 IDE+Agent", chat: true, code: "完整工程", files: true, cmds: true, deploy: true, free: "✅ 有", price: "包含在内", install: false, phone: "不要" },
   { name: "Gemini (免费版)", company: "Google", type: "AI 模型", chat: true, code: "生成片段", files: false, cmds: false, deploy: false, free: "✅ 有", price: "免费", install: false, phone: "不要" }
 ];
 
