@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 知识库 — 扫盲参考手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-root: #08080A;
+  --bg-surface: #111115;
+  --bg-card: #18181C;
+  --bg-card-hover: #1E1E23;
+  --bg-elevated: #222228;
+  --border: #27272D;
+  --border-light: #33333A;
+  --text-primary: #EDEDEF;
+  --text-secondary: #A1A1AA;
+  --text-tertiary: #71717A;
+  --accent: #2DD4BF;
+  --accent-dim: #0D3D38;
+  --accent-glow: rgba(45, 212, 191, 0.12);
+  --accent-text: #14B8A6;
+  --tag-bg: #1A2329;
+  --tag-text: #67E8F9;
+  --cat-basic: #2DD4BF;
+  --cat-basic-bg: rgba(45, 212, 191, 0.1);
+  --cat-company: #A78BFA;
+  --cat-company-bg: rgba(167, 139, 250, 0.1);
+  --cat-tool: #FB923C;
+  --cat-tool-bg: rgba(251, 146, 60, 0.1);
+  --warning: #FACC15;
+  --warning-bg: rgba(250, 204, 21, 0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --font-display: 'Outfit', 'Noto Sans SC', sans-serif;
+  --font-body: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-root);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Navigation ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(8, 8, 10, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.nav-brand-icon {
+  width: 28px; height: 28px;
+  background: var(--accent);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.nav-link {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.nav-link.active {
+  color: var(--accent-text);
+  background: var(--accent-dim);
+}
+
+.nav-search {
+  margin-left: auto;
+  position: relative;
+}
+
+.nav-search input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 7px 14px 7px 36px;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  width: 200px;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.nav-search input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+  width: 260px;
+}
+
+.nav-search input::placeholder { color: var(--text-tertiary); }
+
+.nav-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 120px 24px 64px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.hero-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
+  background: var(--accent-dim);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.hero-label::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  max-width: 720px;
+}
+
+.hero h1 span {
+  color: var(--accent);
+}
+
+.hero p {
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 1.0625rem;
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hero-stat-label {
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+/* ── Section ── */
+.section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.section-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.section-header .count {
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+  font-weight: 400;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0 24px 80px;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+}
+
+/* ── Category Grid ── */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+.cat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cat-card:hover {
+  border-color: var(--border-light);
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.cat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cat-card-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.cat-card-icon.basic { background: var(--cat-basic-bg); color: var(--cat-basic); }
+.cat-card-icon.company { background: var(--cat-company-bg); color: var(--cat-company); }
+.cat-card-icon.tool { background: var(--cat-tool-bg); color: var(--cat-tool); }
+
+.cat-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+.cat-card p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.cat-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.cat-card-tag {
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  font-weight: 500;
+}
+
+/* ── A-Z Index ── */
+.az-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-bottom: 48px;
+}
+
+.az-letter {
+  width: 36px; height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: var(--font-display);
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.az-letter:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.az-letter.active {
+  background: var(--accent-dim);
+  color: var(--accent-text);
+}
+
+.az-letter.empty {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* ── Term Detail (Modal) ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 4, 6, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  max-width: 640px;
+  width: 100%;
+  max-height: 85dvh;
+  overflow-y: auto;
+  transform: translateY(12px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.open .modal {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 28px 28px 0;
+}
+
+.modal-term {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.modal-fullname {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.modal-close {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.modal-close:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: 20px 28px 28px;
+}
+
+.modal-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+  margin-bottom: 16px;
+}
+
+.modal-category::before {
+  content: '';
+  width: 4px; height: 4px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.modal-definition {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.modal-analogy {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.modal-analogy-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.modal-analogy-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.modal-related-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.modal-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.modal-related-chip {
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.modal-related-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+  background: var(--accent-dim);
+}
+
+/* ── Comparison Table ── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  min-width: 900px;
+}
+
+.compare-table th {
+  text-align: left;
+  padding: 14px 18px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.compare-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--bg-card);
+}
+
+.compare-table td {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.compare-table td:first-child {
+  font-weight: 600;
+  position: sticky;
+  left: 0;
+  background: var(--bg-surface);
+  z-index: 1;
+}
+
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: var(--bg-card-hover); }
+.compare-table tr:hover td:first-child { background: var(--bg-card-hover); }
+
+.check { color: var(--accent); font-weight: 600; }
+.cross { color: var(--text-tertiary); }
+.warn { color: var(--warning); }
+
+/* ── Knowledge Graph ── */
+.graph-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  overflow-x: auto;
+}
+
+.graph-svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.graph-node {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.graph-node:hover circle {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.graph-node:hover text {
+  fill: var(--accent-text);
+}
+
+.graph-edge {
+  stroke: var(--border-light);
+  stroke-width: 1;
+}
+
+/* ── Footer ── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.footer p {
+  font-size: 0.8125rem;
+  color: var(--text-tertiary);
+}
+
+.footer a {
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+/* ── Toast ── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 20px;
+  font-size: 0.8125rem;
+  color: var(--text-primary);
+  z-index: 300;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── No results ── */
+.no-results {
+  text-align: center;
+  padding: 60px 24px;
+  color: var(--text-tertiary);
+}
+
+.no-results-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.no-results p {
+  font-size: 0.9375rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .nav-inner { padding: 0 16px; gap: 4px; }
+  .nav-brand { margin-right: 8px; font-size: 1rem; }
+  .nav-link { padding: 6px 10px; font-size: 0.8125rem; }
+  .nav-search input { width: 120px; }
+  .nav-search input:focus { width: 160px; }
+  .hero { padding: 100px 16px 48px; }
+  .hero h1 { font-size: 1.75rem; }
+  .hero-stats { gap: 20px; flex-wrap: wrap; }
+  .section { padding: 0 16px 56px; }
+  .section-divider { margin: 0 16px 56px; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .az-letter { width: 30px; height: 30px; font-size: 0.75rem; }
+  .modal { margin: 16px; max-height: 80dvh; }
+  .graph-container { padding: 16px; }
+}
+
+@media (max-width: 480px) {
+  .nav-search { display: none; }
+  .nav-links { gap: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <span class="nav-brand-icon">⚡</span>
+      AI 知识库
+    </a>
+    <div class="nav-links">
+      <a href="#categories" class="nav-link active" data-nav="categories">分类</a>
+      <a href="#az" class="nav-link" data-nav="az">A-Z</a>
+      <a href="#compare" class="nav-link" data-nav="compare">对比</a>
+      <a href="#graph" class="nav-link" data-nav="graph">图谱</a>
+    </div>
+    <div class="nav-search">
+      <span class="nav-search-icon">⌕</span>
+      <input type="text" id="searchInput" placeholder="搜索词条..." autocomplete="off">
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-label">持续更新中</div>
+  <h1>从零开始理解 <span>AI</span>，一张页面就够了</h1>
+  <p>为你整理了与AI相关的所有基础概念、公司和工具。深色科技风，双击即用，任何设备都能打开。</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="hero-stat-value" id="statTerms">0</span>
+      <span class="hero-stat-label">词条收录</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-value" id="statCats">0</span>
+      <span class="hero-stat-label">知识分类</span>
+    </div>
+    <div class="hero-stat">
+      <span class="hero-stat-value" id="statTools">0</span>
+      <span class="hero-stat-label">工具对比</span>
+    </div>
+  </div>
+</header>
+
+<!-- Category Section -->
+<section class="section" id="categories">
+  <div class="section-header">
+    <h2>📂 分类浏览</h2>
+    <span class="count" id="catCount"></span>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+</section>
+
+<hr class="section-divider">
+
+<!-- A-Z Section -->
+<section class="section" id="az">
+  <div class="section-header">
+    <h2>🔤 A-Z 索引</h2>
+    <span class="count" id="azCount"></span>
+  </div>
+  <div class="az-bar" id="azBar"></div>
+  <div id="azContent"></div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Comparison Section -->
+<section class="section" id="compare">
+  <div class="section-header">
+    <h2>📊 工具对比速查表</h2>
+    <span class="count" id="compareCount"></span>
+  </div>
+  <div class="table-wrap" id="compareTable"></div>
+</section>
+
+<hr class="section-divider">
+
+<!-- Knowledge Graph -->
+<section class="section" id="graph">
+  <div class="section-header">
+    <h2>🔗 概念关联图谱</h2>
+    <span class="count">点击节点查看详情</span>
+  </div>
+  <div class="graph-container">
+    <svg class="graph-svg" id="graphSvg" viewBox="0 0 1000 700"></svg>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>AI 知识库 · 扫盲参考手册 · 数据驱动，随 AI 发展持续更新</p>
+</footer>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-term" id="modalTerm"></div>
+        <div class="modal-fullname" id="modalFullname"></div>
+      </div>
+      <button class="modal-close" id="modalClose">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-category" id="modalCategory"></div>
+      <div class="modal-definition" id="modalDefinition"></div>
+      <div class="modal-analogy" id="modalAnalogyWrap">
+        <div class="modal-analogy-label">🧠 类比理解</div>
+        <div class="modal-analogy-text" id="modalAnalogy"></div>
+      </div>
+      <div class="modal-related-label">相关概念</div>
+      <div class="modal-related" id="modalRelated"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────
+// 📊 数据层 — 在这里增补新词条
+// ─────────────────────────────────────
+const glossary = [
+  {
+    id: "llm",
+    term: "LLM",
+    fullName: "Large Language Model · 大语言模型",
+    category: "基础概念",
+    importance: "核心",
+    letter: "L",
+    definition: "AI 的「大脑」本身——一个被喂了几万亿字训练出来的巨型数学公式。ChatGPT 背后是 GPT，Google AI Studio 背后是 Gemini，PieBox 背后是 Claude。LLM 是发动机，ChatGPT / PieBox 是装了这台发动机的车。",
+    analogy: "LLM 是一台发动机，ChatGPT 是装了这台发动机的汽车。发动机决定性能上限，汽车决定好不好开。",
+    related: ["Token", "模型", "推理", "Prompt"]
+  },
+  {
+    id: "token",
+    term: "Token",
+    fullName: "Token · 词元",
+    category: "基础概念",
+    importance: "核心",
+    letter: "T",
+    definition: "AI 不是按「字」读的，是按 Token 读的。大约 1 个汉字 ≈ 1-2 个 Token，1 个英文单词 ≈ 1 个 Token。AI 的一切都按 Token 算钱、算额度——你输入的每个字、AI 输出的每个字，都在消耗 Token。",
+    analogy: "Token 是 AI 世界的「字数」。就像打车按公里计价，AI 按 Token 计价。问得越长、答得越长，消耗越多。",
+    related: ["LLM", "Credits", "上下文窗口"]
+  },
+  {
+    id: "context-window",
+    term: "上下文窗口",
+    fullName: "Context Window · 上下文窗口",
+    category: "基础概念",
+    importance: "核心",
+    letter: "S",
+    definition: "AI 一次性能「记住」的最大 Token 数。比如 200K 上下文窗口 = AI 能同时记住大约 15 万汉字。超出窗口的内容，AI 就「忘」了——这也是为什么长对话到后面 AI 会「失忆」。Gemini 的 1M 窗口是目前最大的之一。",
+    analogy: "上下文窗口是 AI 的「短期记忆容量」。Gemini 的 1M 窗口是大卡车，Codex 的 200K 是小货车。装不下的内容就会被扔掉。",
+    related: ["Token", "LLM", "Prompt"]
+  },
+  {
+    id: "prompt",
+    term: "Prompt",
+    fullName: "Prompt · 提示词",
+    category: "基础概念",
+    importance: "核心",
+    letter: "P",
+    definition: "你输入给 AI 的每一句话都是 Prompt。分两种：User Prompt（你能看到的，你打的字）和 System Prompt（你看不到的隐藏规则，比如「你要诚实回答问题」）。Prompt 写得好坏，直接影响 AI 的回答质量。",
+    analogy: "Prompt 是 AI 的「工作任务」。System Prompt 是员工手册，User Prompt 是你每次布置的活。指令越清楚，干活越靠谱。",
+    related: ["LLM", "Token", "AI Agent", "推理"]
+  },
+  {
+    id: "ai-agent",
+    term: "AI Agent",
+    fullName: "AI Agent · AI 智能体",
+    category: "基础概念",
+    importance: "核心",
+    letter: "A",
+    definition: "Agent = 不只是回答问题，还能动手干活。对话式 AI 只告诉你「应该这样做」，Agent 直接帮你把文件创建好、代码写好、网页跑起来。它能连环操作、能纠错、能重试。Codex、Claude Code、PieBox 都是 Agent。",
+    analogy: "对话式 AI 是顾问（只给建议），AI Agent 是雇来的员工（直接干活出结果）。你说「做个网页」，Agent 从创建文件到写好代码到预览上线全包了。",
+    related: ["Vibe Coding", "Skill", "LLM", "Prompt"]
+  },
+  {
+    id: "vibe-coding",
+    term: "Vibe Coding",
+    fullName: "Vibe Coding · 氛围编程",
+    category: "基础概念",
+    importance: "核心",
+    letter: "V",
+    definition: "Andrej Karpathy（OpenAI 联合创始人）在 2025 年提出的概念。你描述想要什么，AI 写全部代码，你几乎不看代码细节，只看效果好不好。传统编程是自己干，Vibe Coding 是 AI 干、你验收。",
+    analogy: "传统编程 = 自己做饭。Vibe Coding = 雇了个厨师，你只负责说「我想吃红烧肉」，然后试吃给反馈。Codex 和 Claude Code 就是 vibe coding 工具。",
+    related: ["AI Agent", "Codex", "Claude Code"]
+  },
+  {
+    id: "hallucination",
+    term: "幻觉",
+    fullName: "Hallucination · AI 幻觉",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "H",
+    definition: "AI 胡说八道，但语气非常自信。比如你问「某法律第几条是什么」，AI 可能编一条看起来完全合理的假法律。因为 AI 不是「检索事实」，是「预测下一个最可能的词」——有时候预测出了不存在的东西。",
+    analogy: "AI 像一个知识渊博但偶尔瞎编的朋友。你问他一个他不知道的事，他不会说「我不知道」，而是现场编一个听起来很合理的答案。",
+    related: ["LLM", "Temperature", "推理"]
+  },
+  {
+    id: "temperature",
+    term: "Temperature",
+    fullName: "Temperature · 温度",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "T",
+    definition: "控制 AI 回答的「随机性」。温度低（接近 0）→ 每次回答几乎一样，保守、安全。温度高（接近 1）→ 每次回答可能不同，更有创意但更可能胡说八道。编程任务通常用低温，创意写作可能用高温。",
+    analogy: "温度是 AI 的「冒险指数」。温度低像保守的会计，每次给一样的答案；温度高像艺术家，每次可能有新想法，但也可能离谱。",
+    related: ["幻觉", "推理", "LLM"]
+  },
+  {
+    id: "api",
+    term: "API",
+    fullName: "Application Programming Interface · 应用程序接口",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "A",
+    definition: "让程序调用 AI 的接口。在 chatgpt.com 网页里聊天不需要 API；在自己写的程序里调用 AI 就需要 API。API Key 是调用接口的密码，有了它你的程序才能跟 AI 对话。",
+    analogy: "API 是 AI 的「对外窗口」。你在餐厅吃饭（网页）不需要进后厨；但你想让家里的机器人帮你做饭（程序调用），就需要后厨的通行证（API Key）。",
+    related: ["API Key", "Credits"]
+  },
+  {
+    id: "api-key",
+    term: "API Key",
+    fullName: "API Key · API 密钥",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "A",
+    definition: "调用 AI API 的密码。你在 OpenAI / Google 平台生成一串字符，写进程序里，程序就能跟 AI 对话了。API Key 通常按用量收费，需要绑定信用卡或预充值。Codex 走 ChatGPT 订阅就不要 Key，走 API 方式就要。",
+    analogy: "API Key 是 AI 服务的「门禁卡」。有了卡才能进门，进门后按使用时间/次数扣费。丢了卡别人可能盗刷你的额度。",
+    related: ["API", "Credits"]
+  },
+  {
+    id: "credits",
+    term: "Credits / 额度",
+    fullName: "Credits · 额度 / 配额",
+    category: "基础概念",
+    importance: "核心",
+    letter: "C",
+    definition: "AI 世界里的「代币」或「点数」。不同平台叫法不同——OpenAI 叫 Credits，Google 叫配额/Quota。本质都是：你的账户里还剩多少 Token 可以用。额度按周/月重置（订阅制）或永不过期（预充值制）。",
+    analogy: "Credits 是你的「AI 游戏币」。每次聊天都在花币，花完了要么等下周重置，要么再买。不同模型「价格」不同：Sol 贵（强），Luna 便宜（快）。",
+    related: ["Token", "API", "API Key", "模型"]
+  },
+  {
+    id: "model",
+    term: "模型 / Model",
+    fullName: "Model · AI 模型",
+    category: "基础概念",
+    importance: "核心",
+    letter: "M",
+    definition: "AI 的版本号。跟手机有 iPhone 14/15/16 一样，AI 也有「代」——GPT-4/5/5.6、Gemini 2.5/3.1、Claude 3.5/4。同一代还分大小：GPT-5.6 分 Sol（最强最贵）、Terra（均衡）、Luna（快速便宜）。",
+    analogy: "模型 = AI 大脑的「型号」。不同型号能力不同、价格不同。简单任务用「小号」就行，省钱；复杂任务才需要「旗舰号」。",
+    related: ["LLM", "推理", "Token", "Credits"]
+  },
+  {
+    id: "inference",
+    term: "推理 / Inference",
+    fullName: "Inference · AI 推理",
+    category: "基础概念",
+    importance: "核心",
+    letter: "T",
+    definition: "AI「想」的过程。你问一个问题，AI 在内部运转模型来生成答案——这个过程就是推理。推理强度越高，AI 想得越深、回答越准，但更慢、更贵。Codex 里的「轻度/中/高/极高」就是调这个。",
+    analogy: "推理 = AI 的「思考时间」。轻度推理是快速扫一眼就答，高推理是认真琢磨再答。数学题需要高推理，「今天天气怎么样」用轻度就够了。",
+    related: ["LLM", "Token", "模型", "幻觉"]
+  },
+  {
+    id: "skill",
+    term: "Skill",
+    fullName: "Skill · 技能包",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "S",
+    definition: "AI Agent 的「专业技能包」。Agent 接到任务 → 识别需要什么能力 → 加载对应 Skill → 开工。比如做网页就加载前端 Skill，做表格就加载 Excel Skill，修 Bug 就加载诊断 Skill。全装进去大脑会臃肿，按需加载才高效。",
+    analogy: "Skill 是 Agent 的「瑞士军刀配件」。不需要把所有工具挂在身上，用到什么拔什么。Agent 的核心只有基础能力，专业知识靠 Skill 来扩展。",
+    related: ["AI Agent", "Prompt"]
+  },
+  {
+    id: "rag",
+    term: "RAG",
+    fullName: "Retrieval-Augmented Generation · 检索增强生成",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "R",
+    definition: "AI 先查资料再回答，而不是纯靠记忆。比如你问「公司最新的报销政策」，AI 先去你的文档库搜索相关内容，找到之后结合着回答。比纯靠 AI 记忆的回答准确得多。",
+    analogy: "普通 AI 是闭卷考试（纯靠背的），RAG 是开卷考试（可以翻书查资料）。答案准确性高得多，尤其适合企业内部知识库场景。",
+    related: ["LLM", "幻觉", "Embedding"]
+  },
+  {
+    id: "embedding",
+    term: "Embedding",
+    fullName: "Embedding · 向量嵌入",
+    category: "基础概念",
+    importance: "了解",
+    letter: "E",
+    definition: "把文字、图片、声音变成一串数字。这串数字代表内容的「意思」——意思相近的内容，数字也相近。这是 RAG、搜索、推荐系统的基础技术。",
+    analogy: "Embedding 是把「意思」翻译成「数学」。两句话意思相似，它们转化成的数字也相似。这样 AI 就能「理解」内容之间的关系了。",
+    related: ["RAG", "LLM"]
+  },
+  {
+    id: "fine-tuning",
+    term: "Fine-tuning",
+    fullName: "Fine-tuning · 微调",
+    category: "基础概念",
+    importance: "了解",
+    letter: "F",
+    definition: "拿一个通用 AI 模型，用特定领域的数据再训练一轮，让它变成某个领域的专家。比如拿 GPT 用医学论文再训一遍，变成医学 AI。比从头训练省钱，比通用模型更专业。",
+    analogy: "Fine-tuning = 给一个全科医生做专科培训。原本什么都会一点，用心脏病学教材再培训三个月，就变成了心脏科专家。",
+    related: ["LLM", "模型"]
+  },
+  {
+    id: "mcp",
+    term: "MCP",
+    fullName: "Model Context Protocol · 模型上下文协议",
+    category: "基础概念",
+    importance: "进阶",
+    letter: "M",
+    definition: "让 AI Agent 连接外部工具的开放协议。比如 Agent 可以通过 MCP 连接数据库查数据、连浏览器搜网页、连 Slack 发消息。Anthropic 主导开发，Codex 和 Claude Code 都支持。",
+    analogy: "MCP 是 Agent 的「万能转接头」。Agent 本身只能操作文件，插上 MCP 就能连接任何外部服务——像一个程序员突然有了所有系统的权限。",
+    related: ["AI Agent", "Skill", "API"]
+  },
+  {
+    id: "openai",
+    term: "OpenAI",
+    fullName: "OpenAI",
+    category: "公司",
+    importance: "核心",
+    letter: "O",
+    definition: "AI 行业的领头羊公司。开发了 GPT 系列模型（ChatGPT 的大脑）、Codex（AI 编程 Agent）、DALL·E（AI 画图）、Sora（AI 视频）。总部在美国旧金山。2023 年 ChatGPT 爆火把 AI 带入大众视野。",
+    analogy: "OpenAI 是 AI 行业的「苹果」——产品线完整，品牌知名，价格不便宜。",
+    related: ["ChatGPT", "Codex", "GPT", "LLM"]
+  },
+  {
+    id: "google-ai",
+    term: "Google (Alphabet)",
+    fullName: "Google · Alphabet",
+    category: "公司",
+    importance: "核心",
+    letter: "G",
+    definition: "科技巨头，AI 领域的强力竞争者。开发了 Gemini 模型系列、Google AI Studio、Gemini CLI、Antigravity 等。优势是生态整合（Firebase、Workspace、Cloud）和超长上下文窗口（1M Token）。",
+    analogy: "Google 是 AI 行业的「三星」——技术实力强，生态完整，从免费到企业级全有覆盖。",
+    related: ["Google AI Studio", "Gemini"]
+  },
+  {
+    id: "anthropic",
+    term: "Anthropic",
+    fullName: "Anthropic",
+    category: "公司",
+    importance: "核心",
+    letter: "A",
+    definition: "由前 OpenAI 员工创立的 AI 公司，主打「安全」和「对齐」。开发了 Claude 模型系列和 Claude Code（AI 编程 Agent）。在编码能力和长文本处理方面与 OpenAI 激烈竞争。PieBox 背后使用的就是 Claude 模型。",
+    analogy: "Anthropic 是 AI 行业的「一加手机」——技术追求极致，粉丝忠诚度高，在特定领域（安全+编码）有独特优势。",
+    related: ["Claude Code", "LLM", "OpenAI"]
+  },
+  {
+    id: "chatgpt",
+    term: "ChatGPT",
+    fullName: "ChatGPT",
+    category: "工具/软件",
+    importance: "核心",
+    letter: "C",
+    definition: "OpenAI 的通用 AI 聊天产品，全球用户最多的 AI 应用。能回答问题、写文章、给建议、生成代码片段。有网页版、桌面版、App。免费版有限制，Plus $20/月解锁更多。Codex 模式已整合进 ChatGPT 桌面端。",
+    analogy: "ChatGPT 是 AI 世界的「微信」——用户最多、功能最多、生态最完整。大多数人接触 AI 的第一步就是 ChatGPT。",
+    related: ["OpenAI", "Codex", "LLM"]
+  },
+  {
+    id: "codex",
+    term: "Codex",
+    fullName: "Codex · OpenAI 编程 Agent",
+    category: "工具/软件",
+    importance: "核心",
+    letter: "C",
+    definition: "OpenAI 的 AI 编程 Agent。在你的项目目录里读代码、写代码、运行命令、修 Bug、部署。CLI 开源，有桌面 App 和 IDE 插件。2026 年起改为 Token 计费，需 ChatGPT Plus $20/月。桌面端强制手机验证是已知痛点。",
+    analogy: "Codex 是「雇来的程序员」——坐在你电脑前，看得懂你的项目，帮你改代码、修 Bug、部署上线。但是要付工资（$20/月），而且「入职审查」（手机验证）比较麻烦。",
+    related: ["OpenAI", "ChatGPT", "Vibe Coding", "AI Agent"]
+  },
+  {
+    id: "google-ai-studio",
+    term: "Google AI Studio",
+    fullName: "Google AI Studio",
+    category: "工具/软件",
+    importance: "核心",
+    letter: "G",
+    definition: "Google 的浏览器端 AI 开发工作台。根据你的描述在浏览器里直接生成完整网页或 Android App，能一键部署到 Firebase。免费层够用，Google 账号即可。也支持 API Key 方式调用 Gemini 模型。",
+    analogy: "Google AI Studio 是「在线工厂」——你说需求，它直接出货。免费、不用装任何东西、不用外币卡。适合做原型和 MVP。",
+    related: ["Google (Alphabet)", "Gemini", "Vibe Coding"]
+  },
+  {
+    id: "claude-code",
+    term: "Claude Code",
+    fullName: "Claude Code · Anthropic 编程 Agent",
+    category: "工具/软件",
+    importance: "进阶",
+    letter: "C",
+    definition: "Anthropic 的 AI 编程 Agent，Codex 的直接竞争对手。功能相似——读代码、写代码、跑命令、修 Bug、部署。CLI 开源，支持 VS Code 和 JetBrains。需 Claude Pro $20/月。特色是 CLAUDE.md 指令文件和并行 Agent。",
+    analogy: "Claude Code 和 Codex 是「两家竞争的外包公司」——干的活一样，但「企业文化」（安全理念、模型风格）不同。选哪个取决于你更信 OpenAI 还是 Anthropic。",
+    related: ["Anthropic", "Codex", "Vibe Coding", "AI Agent"]
+  },
+  {
+    id: "piebox",
+    term: "PieBox",
+    fullName: "PieBox · AI 开发平台",
+    category: "工具/软件",
+    importance: "核心",
+    letter: "P",
+    definition: "内置 AI 的在线开发环境。跟 Codex 一样的 Agent 能力——读代码、写代码、创建文件、运行命令、预览网页，全在一个浏览器窗口里完成。**不需要付费、不需要 API Key、不需要装任何东西。** 背后使用 Claude 模型。你现在就在 PieBox 里。",
+    analogy: "PieBox = Codex 的能力 + Google AI Studio 的零门槛。没有付费墙、没有手机验证、没有外币卡。打开浏览器就能 Vibe Coding。",
+    related: ["AI Agent", "Vibe Coding", "Codex", "Claude Code"]
+  },
+  {
+    id: "gemini",
+    term: "Gemini",
+    fullName: "Gemini · Google AI 模型",
+    category: "工具/软件",
+    importance: "核心",
+    letter: "G",
+    definition: "Google 的 AI 模型家族，ChatGPT/GPT 的直接竞争对手。分多个版本：Pro（最强）、Flash（快速均衡）、Flash-Lite（最快最便宜）。特色是 1M Token 超长上下文窗口，一次能处理整本书。Google AI Studio 免费使用。",
+    analogy: "Gemini 是 Google 造的「发动机」，GPT 是 OpenAI 造的「发动机」。Gemini 的优势是「油箱大」（1M 上下文），GPT 的优势是「马力强」（推理深度）。",
+    related: ["Google (Alphabet)", "Google AI Studio", "LLM", "模型"]
+  },
+  {
+    id: "github-agent",
+    term: "GitHub 与 Agent",
+    fullName: "GitHub 在 AI Agent 中的角色",
+    category: "基础概念",
+    importance: "了解",
+    letter: "G",
+    definition: "GitHub 对 Agent 有三重身份：①身份证——很多 AI 工具用 GitHub OAuth 做登录验证（不需要自己建账号系统）；②文件柜——Agent 写的代码存在 GitHub 仓库里，带版本控制，改坏了能回退；③传送带——代码推到 GitHub 后自动触发测试、部署流水线（GitHub Actions）。",
+    analogy: "GitHub 是 Agent 的「身份证+档案柜+快递员」——登录时确认身份，干活时存代码，干完活自动发货上线。",
+    related: ["AI Agent", "Codex", "Claude Code"]
+  }
+];
+
+const tools = [
+  { name: "ChatGPT", company: "OpenAI", type: "对话式 AI", chat: true, code: "生成片段", files: false, cmds: false, deploy: false, free: "有免费版", price: "$20/月", install: false, phone: "注册可能需要" },
+  { name: "Codex", company: "OpenAI", type: "编码 Agent", chat: true, code: "完整工程", files: true, cmds: true, deploy: true, free: "❌ 无", price: "$20/月起", install: true, phone: "桌面端强制" },
+  { name: "Google AI Studio", company: "Google", type: "在线工作台", chat: true, code: "完整应用", files: false, cmds: false, deploy: "Firebase", free: "✅ 有", price: "API 按量付费", install: false, phone: "不要" },
+  { name: "Claude Code", company: "Anthropic", type: "编码 Agent", chat: true, code: "完整工程", files: true, cmds: true, deploy: true, free: "❌ 无", price: "$20/月起", install: true, phone: "注册需要" },
+  { name: "PieBox", company: "PieBox", type: "在线 IDE+Agent", chat: true, code: "完整工程", files: true, cmds: true, deploy: true, free: "✅ 有", price: "包含在内", install: false, phone: "不要" },
+  { name: "Gemini (免费版)", company: "Google", type: "AI 模型", chat: true, code: "生成片段", files: false, cmds: false, deploy: false, free: "✅ 有", price: "免费", install: false, phone: "不要" }
+];
+
+const categories = ["基础概念", "公司", "工具/软件"];
+
+// ─────────────────────────────────────
+// 🔧 功能层
+// ─────────────────────────────────────
+
+// Stats
+document.getElementById('statTerms').textContent = glossary.length;
+document.getElementById('statCats').textContent = categories.length;
+document.getElementById('statTools').textContent = tools.length;
+document.getElementById('catCount').textContent = `共 ${glossary.length} 个词条`;
+document.getElementById('azCount').textContent = `${glossary.length} 个词条`;
+document.getElementById('compareCount').textContent = `${tools.length} 款工具`;
+
+// Category grid
+const catGrid = document.getElementById('catGrid');
+categories.forEach(cat => {
+  const items = glossary.filter(g => g.category === cat);
+  const icons = { '基础概念': '📐', '公司': '🏢', '工具/软件': '🔧' };
+  const iconClass = cat === '基础概念' ? 'basic' : cat === '公司' ? 'company' : 'tool';
+  const card = document.createElement('div');
+  card.className = 'cat-card';
+  card.onclick = () => {
+    document.getElementById('searchInput').value = '';
+    renderAZ(cat);
+    document.getElementById('az').scrollIntoView({ behavior: 'smooth' });
+  };
+  card.innerHTML = `
+    <div class="cat-card-header">
+      <div class="cat-card-icon ${iconClass}">${icons[cat]}</div>
+      <h3>${cat}</h3>
+    </div>
+    <p>收录 ${items.length} 个词条</p>
+    <div class="cat-card-tags">
+      ${items.slice(0, 6).map(i => `<span class="cat-card-tag">${i.term}</span>`).join('')}
+      ${items.length > 6 ? `<span class="cat-card-tag">+${items.length - 6} 更多</span>` : ''}
+    </div>
+  `;
+  catGrid.appendChild(card);
+});
+
+// A-Z bar
+const azBar = document.getElementById('azBar');
+const allLetters = [...new Set(glossary.map(g => g.letter))].sort();
+const fullAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+fullAlphabet.forEach(letter => {
+  const a = document.createElement('a');
+  a.className = 'az-letter' + (allLetters.includes(letter) ? '' : ' empty');
+  a.textContent = letter;
+  if (allLetters.includes(letter)) {
+    a.href = '#az';
+    a.onclick = (e) => {
+      e.preventDefault();
+      document.querySelectorAll('.az-letter').forEach(el => el.classList.remove('active'));
+      a.classList.add('active');
+      renderAZ(null, letter);
+    };
+  }
+  azBar.appendChild(a);
+});
+
+function renderAZ(categoryFilter = null, letterFilter = null) {
+  const container = document.getElementById('azContent');
+  let filtered = glossary;
+  if (categoryFilter) filtered = filtered.filter(g => g.category === categoryFilter);
+  if (letterFilter) filtered = filtered.filter(g => g.letter === letterFilter);
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><p>没有匹配的词条</p></div>`;
+    return;
+  }
+
+  const groups = {};
+  filtered.forEach(g => {
+    if (!groups[g.letter]) groups[g.letter] = [];
+    groups[g.letter].push(g);
+  });
+
+  let html = '';
+  Object.keys(groups).sort().forEach(letter => {
+    html += `<div style="margin-bottom:32px"><h3 style="font-family:var(--font-display);font-size:1.5rem;color:var(--accent);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)">${letter}</h3>`;
+    groups[letter].forEach(g => {
+      html += `
+        <div class="cat-card" style="margin-bottom:10px" onclick="openDetail('${g.id}')">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <span style="font-family:var(--font-display);font-weight:600;font-size:1rem">${g.term}</span>
+              <span style="color:var(--text-tertiary);font-size:0.8125rem;margin-left:8px">${g.fullName}</span>
+            </div>
+            <span style="font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-text);background:var(--accent-dim);padding:2px 10px;border-radius:999px">${g.category}</span>
+          </div>
+          <p style="font-size:0.8125rem;color:var(--text-secondary);margin-top:6px;line-height:1.5">${g.definition.substring(0, 100)}...</p>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+renderAZ();
+
+// Comparison table
+const compareTable = document.getElementById('compareTable');
+let tableHTML = `<table class="compare-table">
+  <thead><tr>
+    <th>工具</th><th>公司</th><th>类型</th><th>聊天</th><th>写代码</th><th>操作文件</th><th>运行命令</th><th>部署</th><th>免费</th><th>付费起步</th><th>需要安装</th><th>手机验证</th>
+  </tr></thead><tbody>`;
+tools.forEach(t => {
+  const yn = (v) => v === true ? '<span class="check">✅</span>' : v === false ? '<span class="cross">—</span>' : `<span>${v}</span>`;
+  tableHTML += `<tr>
+    <td><strong>${t.name}</strong></td>
+    <td>${t.company}</td>
+    <td>${t.type}</td>
+    <td>${yn(t.chat)}</td>
+    <td>${yn(t.code)}</td>
+    <td>${yn(t.files)}</td>
+    <td>${yn(t.cmds)}</td>
+    <td>${yn(t.deploy)}</td>
+    <td>${t.free}</td>
+    <td>${t.price}</td>
+    <td>${t.install ? '<span class="warn">需要</span>' : '<span class="check">不需要</span>'}</td>
+    <td>${t.phone === '不要' ? '<span class="check">✅ 不要</span>' : '<span class="warn">' + t.phone + '</span>'}</td>
+  </tr>`;
+});
+tableHTML += '</tbody></table>';
+compareTable.innerHTML = tableHTML;
+
+// Knowledge graph
+function renderGraph() {
+  const svg = document.getElementById('graphSvg');
+  const nodes = glossary.filter(g => g.importance === '核心').slice(0, 18);
+  const nodeMap = {};
+
+  // Layout nodes in concentric rings
+  const cx = 500, cy = 350;
+  const rings = [[], [], []];
+  nodes.forEach(n => {
+    if (n.category === '基础概念') rings[0].push(n);
+    else if (n.category === '公司') rings[1].push(n);
+    else rings[2].push(n);
+  });
+
+  const allRings = rings.filter(r => r.length > 0);
+  allRings.forEach((ring, ri) => {
+    const r = 100 + ri * 110;
+    ring.forEach((n, i) => {
+      const angle = (i / ring.length) * Math.PI * 2 - Math.PI / 2;
+      n._x = cx + r * Math.cos(angle);
+      n._y = cy + r * Math.sin(angle);
+      nodeMap[n.id] = n;
+    });
+  });
+
+  // Edges
+  let edgeHTML = '';
+  const drawn = new Set();
+  nodes.forEach(n => {
+    n.related.forEach(rid => {
+      const target = nodeMap[rid];
+      if (target) {
+        const key = [n.id, target.id].sort().join('-');
+        if (!drawn.has(key)) {
+          drawn.add(key);
+          edgeHTML += `<line class="graph-edge" x1="${n._x}" y1="${n._y}" x2="${target._x}" y2="${target._y}" />`;
+        }
+      }
+    });
+  });
+
+  // Nodes
+  const colors = { '基础概念': 'var(--cat-basic)', '公司': 'var(--cat-company)', '工具/软件': 'var(--cat-tool)' };
+  const bgColors = { '基础概念': 'rgba(45,212,191,0.15)', '公司': 'rgba(167,139,250,0.15)', '工具/软件': 'rgba(251,146,60,0.15)' };
+  let nodeHTML = '';
+  nodes.forEach(n => {
+    const color = colors[n.category];
+    const bg = bgColors[n.category];
+    nodeHTML += `
+      <g class="graph-node" onclick="openDetail('${n.id}')" style="cursor:pointer">
+        <circle cx="${n._x}" cy="${n._y}" r="22" fill="${bg}" stroke="${color}" stroke-width="1.5" />
+        <text x="${n._x}" y="${n._y}" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="600" fill="var(--text-primary)" font-family="var(--font-body)">${n.term.length > 6 ? n.term.substring(0, 6) + '…' : n.term}</text>
+      </g>`;
+  });
+
+  svg.innerHTML = edgeHTML + nodeHTML;
+}
+renderGraph();
+
+// Modal
+const modalOverlay = document.getElementById('modalOverlay');
+const modalClose = document.getElementById('modalClose');
+
+function openDetail(id) {
+  const item = glossary.find(g => g.id === id);
+  if (!item) return;
+  document.getElementById('modalTerm').textContent = item.term;
+  document.getElementById('modalFullname').textContent = item.fullName;
+  document.getElementById('modalCategory').textContent = `${item.category} · ${item.importance === '核心' ? '核心概念' : item.importance === '进阶' ? '进阶概念' : '了解即可'}`;
+  document.getElementById('modalDefinition').textContent = item.definition;
+  document.getElementById('modalAnalogy').textContent = item.analogy;
+  const relatedDiv = document.getElementById('modalRelated');
+  relatedDiv.innerHTML = item.related.map(r => {
+    const target = glossary.find(g => g.id === r);
+    return target ? `<button class="modal-related-chip" onclick="openDetail('${r}')">${target.term}</button>` : '';
+  }).join('');
+  document.getElementById('modalAnalogyWrap').style.display = item.analogy ? 'block' : 'none';
+  modalOverlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  modalOverlay.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// Search
+const searchInput = document.getElementById('searchInput');
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  if (!q) { renderAZ(); return; }
+  const filtered = glossary.filter(g =>
+    g.term.toLowerCase().includes(q) ||
+    g.fullName.toLowerCase().includes(q) ||
+    g.definition.toLowerCase().includes(q) ||
+    g.category.includes(q)
+  );
+  const container = document.getElementById('azContent');
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><p>没有找到「${q}」相关词条</p></div>`;
+  } else {
+    container.innerHTML = filtered.map(g => `
+      <div class="cat-card" style="margin-bottom:10px" onclick="openDetail('${g.id}')">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <span style="font-family:var(--font-display);font-weight:600;font-size:1rem">${g.term}</span>
+            <span style="color:var(--text-tertiary);font-size:0.8125rem;margin-left:8px">${g.fullName}</span>
+          </div>
+          <span style="font-size:0.6875rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--accent-text);background:var(--accent-dim);padding:2px 10px;border-radius:999px">${g.category}</span>
+        </div>
+        <p style="font-size:0.8125rem;color:var(--text-secondary);margin-top:6px;line-height:1.5">${g.definition.substring(0, 120)}...</p>
+      </div>
+    `).join('');
+  }
+  document.getElementById('az').scrollIntoView({ behavior: 'smooth' });
+});
+
+// Nav active state
+const navLinks = document.querySelectorAll('.nav-link');
+const sections = ['categories', 'az', 'compare', 'graph'];
+window.addEventListener('scroll', () => {
+  let current = 'categories';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 120) current = id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.dataset.nav === current);
+  });
+});
+
+// Toast
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    searchInput.focus();
+  }
+});
+
+console.log('🤖 AI 知识库已就绪 — ' + glossary.length + ' 个词条，' + tools.length + ' 款工具');
+console.log('⌨️ 按 Ctrl+K 快速搜索');
+console.log('📝 增补词条：编辑 glossary 数组即可');
+</script>
+</body>
+</html>
