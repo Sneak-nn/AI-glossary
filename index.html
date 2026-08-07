@@ -772,8 +772,7 @@ body {
       AI 知识库
     </a>
     <div class="nav-links">
-      <a href="#" class="nav-link active" data-nav="categories">分类</a>
-      <a href="#" class="nav-link" data-nav="az">A-Z</a>
+      <a href="#" class="nav-link active" data-nav="terms">词条</a>
       <a href="#" class="nav-link" data-nav="graph">图谱</a>
       <a href="#" class="nav-link" data-nav="tutorial">教程</a>
     </div>
@@ -808,24 +807,14 @@ body {
   </div>
 </header>
 
-<!-- Category Section -->
-<section class="section tab-section active" id="categories">
+<!-- Terms Section -->
+<section class="section tab-section active" id="terms">
   <div class="section-header">
-    <h2>📂 分类浏览</h2>
+    <h2>📂 词条浏览</h2>
     <span class="count" id="catCount"></span>
   </div>
   <div class="cat-grid" id="catGrid"></div>
-</section>
-
-<hr class="section-divider">
-
-<!-- A-Z Section -->
-<section class="section tab-section" id="az">
-  <div class="section-header">
-    <h2>🔤 A-Z 索引</h2>
-    <span class="count" id="azCount"></span>
-  </div>
-  <div class="az-bar" id="azBar"></div>
+  <div class="az-bar" id="azBar" style="margin-top:40px"></div>
   <div id="azContent"></div>
 </section>
 
@@ -1412,7 +1401,6 @@ document.getElementById('statTerms').textContent = glossary.length;
 document.getElementById('statCats').textContent = categories.length;
 document.getElementById('statTools').textContent = tools.length;
 document.getElementById('catCount').textContent = `共 ${glossary.length} 个词条`;
-document.getElementById('azCount').textContent = `${glossary.length} 个词条`;
 
 
 // Category grid
