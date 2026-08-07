@@ -594,6 +594,153 @@ body {
   background: var(--accent-dim);
 }
 
+
+/* ── Version Toggle ── */
+.modal-version-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: 4px;
+  width: fit-content;
+}
+
+.modal-version-btn {
+  padding: 6px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-body);
+}
+
+.modal-version-btn:hover {
+  color: var(--text-primary);
+}
+
+.modal-version-btn.active {
+  background: var(--accent-dim);
+  color: var(--accent-text);
+}
+
+/* ── Tutorial Panel ── */
+.modal-tutorial-wrap {
+  display: none;
+  margin-top: 16px;
+}
+
+.modal-tutorial-wrap.show {
+  display: block;
+}
+
+.modal-tutorial-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  margin-bottom: 12px;
+}
+
+.modal-tutorial-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-tutorial-section-content {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.modal-tutorial-section-content p {
+  margin-bottom: 10px;
+}
+
+.modal-tutorial-section-content p:last-child {
+  margin-bottom: 0;
+}
+
+.modal-tutorial-section-content strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.modal-tutorial-section-content code {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent-text);
+}
+
+.modal-tutorial-section-content pre {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  margin: 10px 0;
+  color: var(--text-primary);
+}
+
+.modal-tutorial-section-content ol,
+.modal-tutorial-section-content ul {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.modal-tutorial-section-content li {
+  margin-bottom: 4px;
+}
+
+.modal-tutorial-notice {
+  background: var(--warning-bg);
+  border: 1px solid rgba(250, 204, 21, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  color: var(--warning);
+  margin-top: 12px;
+  line-height: 1.6;
+}
+
+/* Adjust modal height for tutorial */
+.modal-overlay.open .modal {
+  max-height: 88dvh;
+}
+
+.modal-definition-wrap {
+  transition: opacity 0.2s ease;
+}
+
+.modal-definition-wrap.hide {
+  display: none;
+}
+
+.modal-analogy-wrap {
+  transition: opacity 0.2s ease;
+}
+
+.modal-analogy-wrap.hide {
+  display: none;
+}
+
 /* ── Comparison Table ── */
 .table-wrap {
   overflow-x: auto;
@@ -928,10 +1075,27 @@ mkdir -p <span class="path">.codex/skills/my-skill</span>
     </div>
     <div class="modal-body">
       <div class="modal-category" id="modalCategory"></div>
-      <div class="modal-definition" id="modalDefinition"></div>
+      <div class="modal-version-toggle" id="modalVersionToggle">
+        <button class="modal-version-btn active" data-version="basic" onclick="switchVersion('basic')">📘 基础</button>
+        <button class="modal-version-btn" data-version="detailed" onclick="switchVersion('detailed')">📖 详细</button>
+      </div>
+      <div class="modal-definition-wrap" id="modalDefWrap">
+        <div class="modal-definition" id="modalDefinition"></div>
+      </div>
       <div class="modal-analogy" id="modalAnalogyWrap">
         <div class="modal-analogy-label">🧠 类比理解</div>
         <div class="modal-analogy-text" id="modalAnalogy"></div>
+      </div>
+      <div class="modal-tutorial-wrap" id="modalTutorialWrap">
+        <div class="modal-tutorial-section">
+          <div class="modal-tutorial-section-title">📖 详细解释</div>
+          <div class="modal-tutorial-section-content" id="modalTutorialExplanation"></div>
+        </div>
+        <div class="modal-tutorial-section" id="modalTutorialHowtoSection">
+          <div class="modal-tutorial-section-title">🛠️ 如何使用</div>
+          <div class="modal-tutorial-section-content" id="modalTutorialHowto"></div>
+        </div>
+        <div class="modal-tutorial-notice" id="modalTutorialNotice" style="display:none"></div>
       </div>
       <div class="modal-related-label">相关概念</div>
       <div class="modal-related" id="modalRelated"></div>
@@ -956,6 +1120,10 @@ const glossary = [
     letter: "L",
     definition: "AI 的「大脑」本身——一个被喂了几万亿字训练出来的巨型数学公式。ChatGPT 背后是 GPT，Google AI Studio 背后是 Gemini，LLM 是发动机，ChatGPT 是装了这台发动机的车。",
     analogy: "LLM 是一台发动机，ChatGPT 是装了这台发动机的汽车。发动机决定性能上限，汽车决定好不好开。",
+    tutorial: '<p><strong>LLM 是什么？</strong>Large Language Model（大语言模型）是一类通过海量文本数据训练出来的 AI 系统。它的核心任务看似简单：根据你输入的文字，预测接下来最可能出现的词。但当这个"预测"经过了数万亿字的训练后，它就展现出了令人惊讶的能力——能回答问题、写代码、翻译、总结、创作。</p><p><strong>关键参数：</strong>模型大小通常用"参数数量"衡量（如 70B = 700 亿参数）。参数越多，模型通常越聪明，但也越慢、越贵。</p><p><strong>主流 LLM：</strong>OpenAI 的 GPT 系列、Google 的 Gemini 系列、Anthropic 的 Claude 系列、Meta 的 Llama（开源）。</p>',
+    howto: '<p>作为普通用户，你不需要"使用"LLM 本身——你使用的是基于 LLM 构建的产品：</p><ol><li><strong>网页聊天：</strong>chatgpt.com、gemini.google.com 直接对话</li><li><strong>AI 编程工具：</strong>Codex、Claude Code、GitHub Copilot</li><li><strong>API 调用：</strong>开发者通过 API 把 LLM 集成到自己的应用中</li><li><strong>本地运行：</strong>用 Ollama 等工具在个人电脑上运行开源 LLM（如 Llama）</li></ol>',
+    notice: '💡 同一个 LLM 可以被包装成不同产品。GPT-5 是 LLM，ChatGPT 和 Codex 都是基于它的不同产品形态。选 LLM 就像选发动机，选产品就像选车型。',
+
     related: ["Token", "模型", "推理", "Prompt"]
   },
   {
@@ -967,6 +1135,9 @@ const glossary = [
     letter: "T",
     definition: "AI 不是按「字」读的，是按 Token 读的。大约 1 个汉字 ≈ 1-2 个 Token，1 个英文单词 ≈ 1 个 Token。AI 的一切都按 Token 算钱、算额度——你输入的每个字、AI 输出的每个字，都在消耗 Token。",
     analogy: "Token 是 AI 世界的「字数」。就像打车按公里计价，AI 按 Token 计价。问得越长、答得越长，消耗越多。",
+    tutorial: '<p><strong>Token 的深层含义：</strong>Token 是 LLM 处理文本的最小单元。它不完全是"字"——英文中大约 1 Token ≈ 0.75 个单词，中文大约 1 Token ≈ 1.5 个汉字。比如"人工智能"可能是 3-4 个 Token。</p><p><strong>为什么 Token 重要？</strong>三个原因：① 计费——API 按 Token 收费，输入和输出都算；② 限制——每个模型有输入+输出的 Token 上限（上下文窗口）；③ 性能——处理更多 Token 需要更多时间和算力。</p>',
+    howto: '<p>你不需要手动数 Token，但了解 Token 的消耗有助于管理成本：</p><ol><li><strong>OpenAI Tokenizer：</strong>platform.openai.com/tokenizer 可以在线查看任意文本消耗的 Token 数</li><li><strong>预估：</strong>一段 1000 字的英文 ≈ 1300 Token，1000 字中文 ≈ 600 Token</li><li><strong>省钱技巧：</strong>精简 Prompt、用较小的模型处理简单任务、开启流式输出减少等待时间</li></ol>',
+
     related: ["LLM", "Credits", "上下文窗口"]
   },
   {
@@ -978,6 +1149,9 @@ const glossary = [
     letter: "S",
     definition: "AI 一次性能「记住」的最大 Token 数。比如 200K 上下文窗口 = AI 能同时记住大约 15 万汉字。超出窗口的内容，AI 就「忘」了——这也是为什么长对话到后面 AI 会「失忆」。Gemini 的 1M 窗口是目前最大的之一。",
     analogy: "上下文窗口是 AI 的「短期记忆容量」。Gemini 的 1M 窗口是大卡车，Codex 的 200K 是小货车。装不下的内容就会被扔掉。",
+    tutorial: '<p><strong>上下文窗口的运作方式：</strong>每次你跟 AI 对话，AI 能"看到"的聊天记录总长度就是上下文窗口。它包括：你的输入 + AI 之前的输出 + 系统指令。一旦超过窗口，AI 会"忘记"最早的内容。</p><p><strong>不同模型的窗口大小：</strong>GPT-5.6 Sol 约 128K Token（约 9 万中文字）、Gemini 2.5 Pro 高达 1M Token（约 70 万中文字，相当于整本《三体》）。</p><p><strong>实际影响：</strong>窗口大 = AI 能同时处理更长文档、记住更久远的对话。但对简单日常对话，几千 Token 就够用。</p>',
+    howto: '<p>高效利用上下文窗口的技巧：</p><ol><li><strong>精简对话：</strong>定期开新会话，不要让一个对话积累成千上万条消息</li><li><strong>结构化输入：</strong>用清晰的标题分段，而不是大段文字堆砌</li><li><strong>优先放关键信息：</strong>最重要的指令放在 Prompt 开头和结尾（AI 更容易记住首尾）</li><li><strong>使用文件引用：</strong>Codex 等工具支持直接引用文件，比把文件内容全部粘贴到聊天更高效</li><li><strong>超出窗口怎么办：</strong>对超长文档，用 RAG 技术分段检索后再让 AI 回答</li></ol>',
+
     related: ["Token", "LLM", "Prompt"]
   },
   {
@@ -989,6 +1163,9 @@ const glossary = [
     letter: "P",
     definition: "你输入给 AI 的每一句话都是 Prompt。分两种：User Prompt（你能看到的，你打的字）和 System Prompt（你看不到的隐藏规则，比如「你要诚实回答问题」）。Prompt 写得好坏，直接影响 AI 的回答质量。",
     analogy: "Prompt 是 AI 的「工作任务」。System Prompt 是员工手册，User Prompt 是你每次布置的活。指令越清楚，干活越靠谱。",
+    tutorial: '<p><strong>Prompt 工程是一门新技能：</strong>好的 Prompt 和差的 Prompt 差距巨大。同样是让 AI 写代码，一句"写个网页"和"用 HTML/CSS 写一个响应式个人主页，深色主题，包含头像、简介、三个项目卡片和一个联系方式"——结果天差地别。</p><p><strong>Prompt 的核心原则：</strong>① 明确上下文（角色、场景）；② 给出具体需求（不要模糊）；③ 提供示例（Few-shot）；④ 指定输出格式；⑤ 分步引导复杂任务。</p><p><strong>进阶技巧：</strong>CoT（Chain of Thought，让 AI 一步步推理）、角色扮演（"你是一个资深前端工程师"）、逆向提问（"先问我几个问题再开始"）。</p>',
+    howto: '<p><strong>实战 Prompt 公式：</strong>角色 + 任务 + 约束 + 格式 + 示例</p><p><strong>范例：</strong></p><pre>你是一个有 10 年经验的 Python 后端工程师（角色）。\n帮我写一个 Flask REST API，实现用户注册和登录功能（任务）。\n要求：使用 JWT 认证，密码需要加密，数据库用 SQLite，\n代码要有清晰的注释（约束）。\n请输出完整的 app.py 文件，并在开头列出所需依赖（格式）。\n风格参考 Flask 官方文档中的示例（示例）。</pre>',
+
     related: ["LLM", "Token", "AI Agent", "推理"]
   },
   {
@@ -1000,6 +1177,9 @@ const glossary = [
     letter: "A",
     definition: "Agent = 不只是回答问题，还能动手干活。对话式 AI 只告诉你「应该这样做」，Agent 直接帮你把文件创建好、代码写好、网页跑起来。它能连环操作、能纠错、能重试。Codex、Claude Code 都是 Agent。",
     analogy: "对话式 AI 是顾问（只给建议），AI Agent 是雇来的员工（直接干活出结果）。你说「做个网页」，Agent 从创建文件到写好代码到预览上线全包了。",
+    tutorial: '<p><strong>Agent 的工作原理：</strong>传统对话式 AI 只是"一问一答"，Agent 则是持续运作的自主系统。它的工作循环是：观察→思考→行动→观察结果→调整→继续行动，循环直到任务完成。</p><p><strong>Agent 的核心能力：</strong>① 工具调用——能操作文件、执行命令、调用 API；② 规划——将大任务拆解成可执行步骤；③ 记忆——在长任务中记住上下文；④ 纠错——执行失败时能自行诊断和重试。</p><p><strong>主要类型：</strong>编码 Agent（Codex、Claude Code）、浏览 Agent（能操作网页）、数据分析 Agent、多 Agent 协作系统。</p>',
+    howto: '<p><strong>开始使用 Agent 的步骤：</strong></p><ol><li><strong>选择工具：</strong>Codex（OpenAI 生态）、Claude Code（Anthropic 生态）、Gemini CLI（Google 生态）</li><li><strong>安装：</strong>终端执行安装命令，如 <code>npm install -g @anthropic-ai/claude-code</code></li><li><strong>进入项目目录：</strong>Agent 需要能访问你的代码文件</li><li><strong>描述任务：</strong>尽量具体——"在 src/utils 下创建一个 formatDate 函数，支持 yyyy-MM-dd 和 MM/dd/yyyy 两种格式，写好测试"</li><li><strong>审查结果：</strong>Agent 会展示它的操作计划，确认后让它执行。执行完后检查结果</li></ol>',
+
     related: ["Vibe Coding", "Skill", "LLM", "Prompt"]
   },
   {
@@ -1011,6 +1191,9 @@ const glossary = [
     letter: "V",
     definition: "Andrej Karpathy（OpenAI 联合创始人）在 2025 年提出的概念。你描述想要什么，AI 写全部代码，你几乎不看代码细节，只看效果好不好。传统编程是自己干，Vibe Coding 是 AI 干、你验收。",
     analogy: "传统编程 = 自己做饭。Vibe Coding = 雇了个厨师，你只负责说「我想吃红烧肉」，然后试吃给反馈。Codex 和 Claude Code 就是 vibe coding 工具。",
+    tutorial: '<p><strong>Vibe Coding 的本质：</strong>Andrej Karpathy 在 2025 年 2 月发推说："有一种新的编程方式我称之为 vibe coding，你完全沉浸在感觉中，忘记代码的存在。"这不是玩笑——他描述了一种真实的范式转变：程序员从"代码编写者"变成"需求描述者+验收者"。</p><p><strong>与传统编程的区别：</strong>传统编程是你理解需求→设计架构→写代码→调试→测试。Vibe Coding 是你描述需求→AI 生成→你测试→不满意就描述改哪里→AI 修改→重复直到满意。你更多在做"产品经理+测试工程师"的工作。</p><p><strong>争议：</strong>批评者认为这是"技术债务生成器"，因为你不理解 AI 写的代码，出问题时无法修复。支持者认为这降低了软件开发的门槛。</p>',
+    howto: '<p><strong>Vibe Coding 的最佳实践：</strong></p><ol><li><strong>从小项目开始：</strong>个人网站、小工具、自动化脚本——错了也容易重来</li><li><strong>保持会话短：</strong>不要在一个会话里让 AI 做太多事，超过 10 轮交互就该考虑开新会话</li><li><strong>频繁测试：</strong>每改一次就立刻验证，不要让问题积累</li><li><strong>用 Git：</strong>每次成功的修改都 Commit，方便回退</li><li><strong>学会看基本错误：</strong>不需要精通编程，但要能看懂"文件找不到""语法错误"这类基础报错</li><li><strong>不要 vibe 关键系统：</strong>银行转账、医疗记录等关键应用不适合 vibe coding</li></ol>',
+
     related: ["AI Agent", "Codex", "Claude Code"]
   },
   {
@@ -1022,6 +1205,9 @@ const glossary = [
     letter: "H",
     definition: "AI 胡说八道，但语气非常自信。比如你问「某法律第几条是什么」，AI 可能编一条看起来完全合理的假法律。因为 AI 不是「检索事实」，是「预测下一个最可能的词」——有时候预测出了不存在的东西。",
     analogy: "AI 像一个知识渊博但偶尔瞎编的朋友。你问他一个他不知道的事，他不会说「我不知道」，而是现场编一个听起来很合理的答案。",
+    tutorial: '<p><strong>幻觉为什么会产生？</strong>LLM 的本质是"预测下一个最可能的词"，而不是"检索事实数据库"。当模型遇到它训练数据中覆盖不足或相互矛盾的信息时，它会"猜"一个听起来合理的答案。这种猜测有时正确，有时就是幻觉。</p><p><strong>幻觉的常见类型：</strong>① 事实错误——编造不存在的事件、人物、数据；② 来源幻觉——引用不存在的论文、链接、法律条文；③ 逻辑幻觉——自相矛盾或不合逻辑的推理。</p><p><strong>哪些场景幻觉风险高？</strong>时效性问题（最新新闻）、专业领域（医学、法律）、小众话题、数值计算（纯 LLM 算不准数学）。</p>',
+    howto: '<p><strong>减少幻觉的实用方法：</strong></p><ol><li><strong>RAG 检索增强：</strong>让 AI 先查资料再回答，而不是纯靠记忆</li><li><strong>要求引用来源：</strong>在 Prompt 中加上"请引用具体来源"</li><li><strong>降低 Temperature：</strong>Temperature 越低回答越保守，越不容易胡说</li><li><strong>事实核查：</strong>AI 给出的关键信息（数据、日期、引用）要自己核实</li><li><strong>使用联网搜索：</strong>ChatGPT 和 Gemini 都支持联网，可以减少时效性幻觉</li><li><strong>分步验证：</strong>让 AI 先列出它知道的事实，再用另一个 AI 或搜索引擎交叉验证</li></ol>',
+
     related: ["LLM", "Temperature", "推理"]
   },
   {
@@ -1033,6 +1219,9 @@ const glossary = [
     letter: "T",
     definition: "控制 AI 回答的「随机性」。温度低（接近 0）→ 每次回答几乎一样，保守、安全。温度高（接近 1）→ 每次回答可能不同，更有创意但更可能胡说八道。编程任务通常用低温，创意写作可能用高温。",
     analogy: "温度是 AI 的「冒险指数」。温度低像保守的会计，每次给一样的答案；温度高像艺术家，每次可能有新想法，但也可能离谱。",
+    tutorial: '<p><strong>Temperature 的数学原理：</strong>Temperature 控制输出概率分布的"平滑度"。T→0 时，模型几乎总是选概率最高的词（确定性输出）；T=1 时，按原始概率分布采样；T>1 时，概率分布被拉平，低频词更容易被选中（更随机）。</p><p><strong>实际场景对照：</strong></p><ul><li>T=0~0.2：代码生成、数学计算、事实问答</li><li>T=0.3~0.5：技术文档、翻译、总结</li><li>T=0.6~0.8：创意写作、头脑风暴、对话</li><li>T=0.9~1.2：诗歌、歌词、艺术创作</li></ul>',
+    howto: '<p>大多数 AI 工具（ChatGPT、Claude、Codex）已经帮你设好了合适的 Temperature，你不需要手动调整。如果需要手动设置：</p><ol><li><strong>OpenAI API：</strong>在 API 调用的参数中设置 <code>"temperature": 0.7</code></li><li><strong>Codex：</strong>推理强度设置间接影响 Temperature（高推理 ≈ 低 Temperature）</li><li><strong>Google AI Studio：</strong>右侧面板有 Temperature 滑块，可以直接拖拽调整</li></ol>',
+
     related: ["幻觉", "推理", "LLM"]
   },
   {
@@ -1044,6 +1233,9 @@ const glossary = [
     letter: "A",
     definition: "让程序调用 AI 的接口。在 chatgpt.com 网页里聊天不需要 API；在自己写的程序里调用 AI 就需要 API。API Key 是调用接口的密码，有了它你的程序才能跟 AI 对话。",
     analogy: "API 是 AI 的「对外窗口」。你在餐厅吃饭（网页）不需要进后厨；但你想让家里的机器人帮你做饭（程序调用），就需要后厨的通行证（API Key）。",
+    tutorial: '<p><strong>API 在 AI 领域的特殊含义：</strong>在 AI 语境下，API 特指让程序调用 AI 模型能力的编程接口。与你用 ChatGPT 网页聊天不同，API 是机器对机器的通信方式。你写代码 → 代码发送请求到 AI 服务器 → 服务器处理 → 返回结果给你的代码。</p><p><strong>REST API 工作流：</strong>你的程序发送 HTTP POST 请求，包含：① API Key（身份验证）；② Model（用哪个模型）；③ Messages（对话内容）；④ 可选参数（Temperature、max_tokens 等）。服务器返回 JSON 格式的 AI 回复。</p><p><strong>常见 AI API：</strong>OpenAI API、Google Gemini API、Anthropic Claude API。</p>',
+    howto: '<p><strong>第一次调用 AI API 的步骤：</strong></p><ol><li><strong>注册获取 API Key：</strong>platform.openai.com → API Keys → 创建新 Key → 立即复制保存</li><li><strong>安装 SDK：</strong><code>pip install openai</code>（Python）或 <code>npm install openai</code>（JS）</li><li><strong>写调用代码：</strong>最简单的 Python 调用只需 5 行代码</li><li><strong>管理 Key 安全：</strong>Key 不要硬编码在代码里！用环境变量 <code>export OPENAI_API_KEY="sk-..."</code></li><li><strong>注意免费额度：</strong>新注册 OpenAI 通常有 $5-18 的免费额度，用完需要绑定信用卡充值</li></ol>',
+
     related: ["API Key", "Credits"]
   },
   {
@@ -1055,6 +1247,9 @@ const glossary = [
     letter: "A",
     definition: "调用 AI API 的密码。你在 OpenAI / Google 平台生成一串字符，写进程序里，程序就能跟 AI 对话了。API Key 通常按用量收费，需要绑定信用卡或预充值。Codex 走 ChatGPT 订阅就不要 Key，走 API 方式就要。",
     analogy: "API Key 是 AI 服务的「门禁卡」。有了卡才能进门，进门后按使用时间/次数扣费。丢了卡别人可能盗刷你的额度。",
+    tutorial: '<p><strong>API Key 的安全模型：</strong>API Key 就相当于你的银行密码——谁拿到它，就能以你的身份调用 API，费用记在你账上。Key 通常格式如 <code>sk-proj-xxxx</code>（OpenAI）或 <code>ghp_xxxx</code>（GitHub）。</p><p><strong>Key 被泄露的后果：</strong>攻击者可能用你的 Key 大量调用 AI API，产生巨额账单。GitHub 上每天都有自动扫描程序在搜索泄露的 API Key——一旦你的 Key 被推到公开仓库，几分钟内就可能被盗用。</p><p><strong>防护措施：</strong>① 永远不要把 Key 写在代码里提交到 Git；② 使用环境变量；③ 设定 Key 的权限范围和额度上限；④ 定期轮换（删除旧 Key 创建新 Key）。</p>',
+    howto: '<p><strong>安全管理 API Key 的最佳实践：</strong></p><ol><li><strong>环境变量：</strong>在终端 <code>export MY_KEY="sk-xxx"</code>，代码里 <code>os.environ.get("MY_KEY")</code></li><li><strong>.env 文件：</strong>项目根目录创建 <code>.env</code> 文件存放 Key，确保 <code>.gitignore</code> 包含 <code>.env</code></li><li><strong>密钥管理服务：</strong>生产环境用 AWS Secrets Manager、GitHub Secrets 等服务</li><li><strong>立即轮换：</strong>如果不小心泄露了 Key，马上去平台删除它并创建新的</li><li><strong>权限最小化：</strong>创建 Key 时只勾选必需权限，不要给全部权限</li></ol>',
+
     related: ["API", "Credits"]
   },
   {
@@ -1066,6 +1261,9 @@ const glossary = [
     letter: "C",
     definition: "AI 世界里的「代币」或「点数」。不同平台叫法不同——OpenAI 叫 Credits，Google 叫配额/Quota。本质都是：你的账户里还剩多少 Token 可以用。额度按周/月重置（订阅制）或永不过期（预充值制）。",
     analogy: "Credits 是你的「AI 游戏币」。每次聊天都在花币，花完了要么等下周重置，要么再买。不同模型「价格」不同：Sol 贵（强），Luna 便宜（快）。",
+    tutorial: '<p><strong>各平台额度体系对比：</strong></p><ul><li><strong>OpenAI：</strong>新用户注册赠送 Credits（如 $5），按 Token 消耗实时扣减，用完即止。ChatGPT Plus $20/月订阅是独立体系。</li><li><strong>Google AI Studio：</strong>免费层每分钟请求次数和每日 Token 总量有限制，足够个人项目和原型开发。</li><li><strong>Codex：</strong>2026 年起改为 Token 计费，需要 ChatGPT Plus $20/月订阅 + Token 消耗双重计费。</li></ul><p><strong>Credits 消耗速度估算：</strong>一次简单问答消耗约 200-1000 Token（几分钱），一次完整编程任务可能消耗 10000-50000 Token（几毛到几块钱）。</p>',
+    howto: '<p><strong>控制成本的实用策略：</strong></p><ol><li><strong>场景选模型：</strong>简单任务用 Luna/Flash-Lite（便宜），复杂任务才用 Sol/GPT-Pro（贵）</li><li><strong>监控使用量：</strong>各平台都有 Dashboard 可以看实时消耗</li><li><strong>设置额度上限：</strong>OpenAI 可以在 Billing 页面设置每月硬性上限</li><li><strong>使用流式输出：</strong>如果不需要完整回复，可以设置 max_tokens 限制每次输出的长度</li><li><strong>缓存常见回答：</strong>对重复性问题做本地缓存，不反复调用 API</li></ol>',
+
     related: ["Token", "API", "API Key", "模型"]
   },
   {
@@ -1077,6 +1275,9 @@ const glossary = [
     letter: "M",
     definition: "AI 的版本号。跟手机有 iPhone 14/15/16 一样，AI 也有「代」——GPT-4/5/5.6、Gemini 2.5/3.1、Claude 3.5/4。同一代还分大小：GPT-5.6 分 Sol（最强最贵）、Terra（均衡）、Luna（快速便宜）。",
     analogy: "模型 = AI 大脑的「型号」。不同型号能力不同、价格不同。简单任务用「小号」就行，省钱；复杂任务才需要「旗舰号」。",
+    tutorial: '<p><strong>模型的"代际"差异：</strong>AI 模型的版本迭代非常快。一年前 GPT-4 还是巅峰，现在 GPT-5.6 已经全面碾压。每一代之间在推理深度、代码能力、多模态理解方面都有显著提升。</p><p><strong>同代内的"大小"差异：</strong>同一代模型通常分多个大小：① 旗舰级（Sol/Pro/Opus）——最强、最贵、最慢；② 均衡级（Terra/Flash/Sonnet）——性价比之选；③ 轻量级（Luna/Flash-Lite/Haiku）——简单任务、高并发场景。</p><p><strong>开源 vs 闭源：</strong>闭源模型（GPT、Gemini、Claude）通过 API 使用，无需自己部署。开源模型（Llama、Qwen、DeepSeek）可以自己下载运行，隐私好但需要硬件和运维。</p>',
+    howto: '<p><strong>如何选择模型：</strong></p><ol><li><strong>日常聊天：</strong>Terra/Flash — 快、便宜、够聪明</li><li><strong>写代码：</strong>Sol/Sonnet — 推理能力强，代码质量高</li><li><strong>长文档分析：</strong>Gemini 2.5 Pro — 1M Token 上下文窗口</li><li><strong>省钱方案：</strong>先用 Luna 试，不满意再切 Sol</li><li><strong>隐私需求：</strong>本地运行 Llama/Qwen，数据不出你的电脑</li></ol>',
+
     related: ["LLM", "推理", "Token", "Credits"]
   },
   {
@@ -1088,6 +1289,9 @@ const glossary = [
     letter: "T",
     definition: "AI「想」的过程。你问一个问题，AI 在内部运转模型来生成答案——这个过程就是推理。推理强度越高，AI 想得越深、回答越准，但更慢、更贵。Codex 里的「轻度/中/高/极高」就是调这个。",
     analogy: "推理 = AI 的「思考时间」。轻度推理是快速扫一眼就答，高推理是认真琢磨再答。数学题需要高推理，「今天天气怎么样」用轻度就够了。",
+    tutorial: '<p><strong>推理强度的技术含义：</strong>推理强度本质上控制 AI "思考"的计算量。低推理时模型快速输出，类似直觉反应；高推理时模型进行多次内部迭代，类似深思熟虑。这种机制叫做"推理时计算扩展"（Inference-time Compute Scaling）。</p><p><strong>对用户的实质影响：</strong>高推理 = 更好的数学、逻辑、编程能力，但 <strong>更慢 + 更贵</strong>。Codex 中默认推理约 20-30 秒回复，切换到"极高"可能需要 2-5 分钟。</p><p><strong>推理 vs 训练：</strong>训练是让 AI 学会知识（大工程，耗时数月），推理是让 AI 运用知识（每次回答都发生）。</p>',
+    howto: '<p><strong>各工具的推理强度选择：</strong></p><ul><li><strong>Codex：</strong>底部滑条，轻度/中/高/极高四档</li><li><strong>ChatGPT：</strong>切换模型即切换推理强度</li><li><strong>Claude Code：</strong>默认推理较深，无手动调节</li><li><strong>Google AI Studio：</strong>可在右侧面板调节</li></ul><p><strong>使用建议：</strong>写代码/做数学 → 高推理；日常问答 → 轻度或默认；头脑风暴 → 中度（平衡创意和速度）</p>',
+
     related: ["LLM", "Token", "模型", "幻觉"]
   },
   {
@@ -1099,6 +1303,9 @@ const glossary = [
     letter: "S",
     definition: "Skill 是一个标准化、可复用的 AI Agent 扩展包。最早由 Anthropic 提出并开源（agentskills.io），本质是包含 SKILL.md 的文件夹。通过渐进式加载（Discovery→Activation→Execution），Agent 按需读取。支持 40+ 款工具。",
     analogy: "Skill 是 Agent 的「瑞士军刀配件」。不需要把所有工具挂在身上，用到什么拔什么。Agent 的核心只有基础能力，专业知识靠 Skill 来扩展。",
+    tutorial: '<p><strong>Skill 的技术架构：</strong>Skill 是一个包含 SKILL.md 文件的文件夹，该文件用 Markdown 格式定义 Skill 的 name 和 description。Skill 采用渐进式加载机制：</p><ol><li><strong>Discovery（发现）：</strong>Agent 扫描 Skill 目录，只读取 SKILL.md 中的 name 和 description</li><li><strong>Activation（激活）：</strong>当用户任务匹配某个 Skill 时，Agent 将完整 SKILL.md 加载到上下文</li><li><strong>Execution（执行）：</strong>Agent 按 SKILL.md 中的指令执行，可选调用附带的脚本和模板</li></ol><p><strong>与传统插件的区别：</strong>传统插件是二进制代码，Skill 是纯文本指令——这意味着任何人都能创建、修改、分享 Skill，不需要编程能力。</p>',
+    howto: '<p><strong>如何创建自己的 Skill：</strong></p><ol><li><strong>创建文件夹：</strong>以 Skill 名称命名，如 <code>my-skill/</code></li><li><strong>写 SKILL.md：</strong>包含 <code>---name: My Skill---description: 简短描述---</code> 元数据 + 详细指令正文</li><li><strong>添加资源（可选）：</strong>脚本文件、模板文件、参考文档</li><li><strong>安装到 Agent：</strong>复制到 Agent 的 Skills 目录（Codex: <code>~/.codex/skills/</code>，Claude Code: <code>~/.claude/skills/</code>）</li><li><strong>分享：</strong>发布到 agentskills.io 或 GitHub 让其他人使用</li></ol>',
+
     related: ["AI Agent", "Prompt"]
   },
   {
@@ -1110,6 +1317,9 @@ const glossary = [
     letter: "A",
     definition: "Agent Skills 是由 Anthropic 发起并开源的 AI Agent 技能扩展标准（agentskills.io）。定义轻量级跨平台格式：每个 Skill 是一个文件夹，核心是 SKILL.md（含 name 和 description），可选附带脚本、文档、模板。采用渐进式加载（Discovery-Activation-Execution），Agent 按需读取。已被 Claude Code、Codex、Gemini CLI、Cursor、GitHub Copilot 等 40+ 工具支持。",
     analogy: "Agent Skills 就像 App Store。每个 Skill 是一个 App，开发者打包发布，用户下载安装后 Agent 就多了这个能力。不同的是 Skills 是开源纯文本的，谁都能创建和分享。",
+    tutorial: '<p><strong>Agent Skills 是什么？</strong>Agent Skills 不是一个具体的 Skill，而是一个<strong>开放标准</strong>——由 Anthropic 发起并开源（agentskills.io），定义了 AI Agent 如何发现、加载和执行技能的通用规范。</p><p><strong>标准的野心：</strong>在 Agent Skills 之前，每个 AI 工具有自己的一套扩展机制（Codex 有 Skills、Claude Code 有 CLAUDE.md、Gemini CLI 有自己的配置），互不兼容。Agent Skills 试图成为"USB-C 接口"——写一个 Skill，所有 Agent 都能用。</p><p><strong>支持的生态：</strong>已获得 Claude Code、Codex、Gemini CLI、Cursor、GitHub Copilot 等 40+ 工具的支持。</p>',
+    howto: '<p><strong>实战：给你的 Agent 添加一个 Skill</strong></p><ol><li><strong>浏览可用 Skill：</strong>访问 agentskills.io 或 github.com/anthropics/skills 浏览现有 Skill 列表</li><li><strong>下载：</strong>把 Skill 文件夹克隆或复制到你的 Agent 的 Skills 目录</li><li><strong>验证：</strong>在聊天中说"你能用 [Skill 名称] 吗？"Agent 会自动发现并加载</li><li><strong>推荐 Skill：</strong>PPT 制作 Skill、数据分析 Skill、前端 UI Skill——开箱即用</li></ol><p>📌 Agent Skills 和 MCP 的关系：MCP 让 Agent 连接外部工具（数据库、API），Agent Skills 让 Agent 获得领域知识和工作流程。两者互补。</p>',
+
     related: ["Skill", "AI Agent", "MCP", "Claude Code", "Codex"]
   },
   {
@@ -1121,6 +1331,9 @@ const glossary = [
     letter: "R",
     definition: "AI 先查资料再回答，而不是纯靠记忆。比如你问「公司最新的报销政策」，AI 先去你的文档库搜索相关内容，找到之后结合着回答。比纯靠 AI 记忆的回答准确得多。",
     analogy: "普通 AI 是闭卷考试（纯靠背的），RAG 是开卷考试（可以翻书查资料）。答案准确性高得多，尤其适合企业内部知识库场景。",
+    tutorial: '<p><strong>RAG 的技术流程：</strong>① 文档被切分成小块（Chunking）；② 每块通过 Embedding 模型转换成向量（一串数字）；③ 向量存入向量数据库；④ 用户提问时，问题也转成向量；⑤ 在向量数据库中搜索最相似的文档块；⑥ 把搜到的文档块和用户问题一起发给 LLM；⑦ LLM 结合检索到的资料生成回答。</p><p><strong>RAG vs 微调：</strong>RAG 不需要重新训练模型，只需要更新知识库——省钱、快速、实时。微调改变了模型本身，适合固定领域知识。实际系统中常常两者结合使用。</p><p><strong>典型应用：</strong>企业知识库问答、客服系统、法律文书检索、学术论文助手。</p>',
+    howto: '<p><strong>入门 RAG 的最简单方式：</strong></p><ol><li><strong>ChatGPT 文件上传：</strong>上传 PDF/文档让 ChatGPT 基于文件内容回答问题（内置了简化版 RAG）</li><li><strong>Google AI Studio：</strong>支持上传文件作为上下文（1M Token 窗口天然支持大量文档）</li><li><strong>LangChain：</strong>Python 框架，提供完整的 RAG 实现组件</li><li><strong>向量数据库：</strong>Pinecone（托管）、ChromaDB（开源）、Weaviate 等</li></ol>',
+
     related: ["LLM", "幻觉", "Embedding"]
   },
   {
@@ -1132,6 +1345,9 @@ const glossary = [
     letter: "E",
     definition: "把文字、图片、声音变成一串数字。这串数字代表内容的「意思」——意思相近的内容，数字也相近。这是 RAG、搜索、推荐系统的基础技术。",
     analogy: "Embedding 是把「意思」翻译成「数学」。两句话意思相似，它们转化成的数字也相似。这样 AI 就能「理解」内容之间的关系了。",
+    tutorial: '<p><strong>Embedding 的直观理解：</strong>想象在 3D 空间中，每个词是一个点。"猫"和"狗"的点很近（都是宠物），"猫"和"汽车"的点很远。真实 Embedding 不是 3D 而是 768D 或 1536D 的高维空间，但原理相同——语义相近的文本在向量空间中距离近。</p><p><strong>Embedding 模型 vs LLM：</strong>Embedding 模型专门用于把文本转成向量，不做生成。它们比 LLM 小得多、快得多、便宜得多。</p><p><strong>常见用途：</strong>RAG 检索、语义搜索（搜"跑车"也能找到"法拉利"相关内容）、内容推荐、文本去重、聚类分析。</p>',
+    notice: '💡 普通用户几乎不需要接触 Embedding。它更多是开发者用 API 调用的基础设施。但理解它的原理有助于理解 RAG 和搜索为什么能"理解意思而不仅仅是关键词"。',
+
     related: ["RAG", "LLM"]
   },
   {
@@ -1143,6 +1359,10 @@ const glossary = [
     letter: "F",
     definition: "拿一个通用 AI 模型，用特定领域的数据再训练一轮，让它变成某个领域的专家。比如拿 GPT 用医学论文再训一遍，变成医学 AI。比从头训练省钱，比通用模型更专业。",
     analogy: "Fine-tuning = 给一个全科医生做专科培训。原本什么都会一点，用心脏病学教材再培训三个月，就变成了心脏科专家。",
+    tutorial: '<p><strong>微调的本质：</strong>拿一个已经训练好的通用模型（如 GPT-4），用你特定领域的数据继续训练。这个训练量远比从头训练小（通常是几百到几万条数据，而非几万亿 Token），所以叫"微调"。</p><p><strong>微调 vs 提示工程 vs RAG：</strong></p><ul><li><strong>提示工程：</strong>最轻量——改 Prompt 就行，免费，但效果有限</li><li><strong>RAG：</strong>中等——让 AI 查外部知识库，灵活但依赖检索质量</li><li><strong>微调：</strong>最深度——改变 AI 本身的回答风格和能力，效果好但贵且需要准备训练数据</li></ul><p><strong>什么场景值得微调？</strong>需要 AI 以特定风格回复（如品牌语气）、需要 AI 掌握公司内部术语和流程、做专门的分类/提取任务。</p>',
+    howto: '<p><strong>微调的基本流程：</strong></p><ol><li><strong>准备数据：</strong>收集几百到几千条优质问答对（JSONL 格式）</li><li><strong>上传数据：</strong>通过 OpenAI API 或 Google AI Studio 上传</li><li><strong>创建微调作业：</strong>选择基础模型，指定训练参数</li><li><strong>等待训练：</strong>通常几小时到一天</li><li><strong>测试：</strong>用测试集评估微调后的模型表现</li><li><strong>部署使用：</strong>微调后的模型有独立的模型 ID，通过 API 调用</li></ol>',
+    notice: '⚠️ 微调有一定技术门槛和成本（通常 $10-100+），建议先尝试 RAG + 提示工程，不够用再考虑微调。',
+
     related: ["LLM", "模型"]
   },
   {
@@ -1154,6 +1374,9 @@ const glossary = [
     letter: "M",
     definition: "让 AI Agent 连接外部工具的开放协议。比如 Agent 可以通过 MCP 连接数据库查数据、连浏览器搜网页、连 Slack 发消息。Anthropic 主导开发，Codex 和 Claude Code 都支持。",
     analogy: "MCP 是 Agent 的「万能转接头」。Agent 本身只能操作文件，插上 MCP 就能连接任何外部服务——像一个程序员突然有了所有系统的权限。",
+    tutorial: '<p><strong>MCP 的架构设计：</strong>MCP（Model Context Protocol）是一个 Client-Server 协议。AI Agent 是 Client，外部工具/服务是 Server。Agent 通过标准化的 JSON-RPC 消息与 Server 通信，实现工具发现、调用和结果获取。</p><p><strong>MCP 能连接什么？</strong>数据库（PostgreSQL、SQLite）、搜索引擎（Brave、Google）、生产力工具（Slack、Notion、GitHub）、文件系统、浏览器。一个 Agent 可以同时连接多个 MCP Server。</p><p><strong>MCP vs API 直接调用：</strong>直接用 API 需要 Agent 知道每个 API 的具体调用方式。MCP 提供了统一协议和自动工具发现。</p>',
+    howto: '<p><strong>配置 MCP Server 的基本步骤：</strong></p><ol><li><strong>找到 MCP Server：</strong>github.com/modelcontextprotocol/servers 有官方和社区 Server 列表</li><li><strong>安装：</strong>通常是 <code>npm install</code> 或 <code>pip install</code> 对应的包</li><li><strong>配置：</strong>在 Agent 的 MCP 配置文件中添加 Server 信息（JSON 格式）</li><li><strong>重启 Agent：</strong>让 Agent 加载新的 MCP Server</li><li><strong>使用：</strong>Agent 会自动发现新工具，你可以直接说"帮我查数据库中的用户表"</li></ol><p>📌 Codex 和 Claude Code 都内置了 MCP 支持，默认配置好了 GitHub、文件系统等常用 Server。</p>',
+
     related: ["AI Agent", "Skill", "API"]
   },
   {
@@ -1165,6 +1388,8 @@ const glossary = [
     letter: "O",
     definition: "AI 行业的领头羊公司。开发了 GPT 系列模型（ChatGPT 的大脑）、Codex（AI 编程 Agent）、DALL·E（AI 画图）、Sora（AI 视频）。总部在美国旧金山。2023 年 ChatGPT 爆火把 AI 带入大众视野。",
     analogy: "OpenAI 是 AI 行业的「苹果」——产品线完整，品牌知名，价格不便宜。",
+    tutorial: '<p><strong>OpenAI 的发展历程：</strong>2015 年成立，最初是非营利 AI 研究组织；2019 年转为"有限盈利"模式；2022 年 11 月发布 ChatGPT，两个月破 1 亿用户（史上最快增长的应用）；2023-2025 年持续发布 GPT-4、GPT-5、Sora（视频生成）、GPT-5.6、Codex CLI 等。</p><p><strong>核心产品矩阵：</strong></p><ul><li><strong>ChatGPT：</strong>通用 AI 聊天，用户最多</li><li><strong>GPT 系列 API：</strong>面向开发者</li><li><strong>Codex：</strong>AI 编程 Agent</li><li><strong>DALL-E：</strong>AI 画图</li><li><strong>Sora：</strong>AI 视频生成</li><li><strong>Whisper：</strong>语音识别</li></ul><p><strong>特点：</strong>技术领先、模型能力强、生态完善（插件、GPTs Store、API 生态），但价格较高、需要手机号验证（中国大陆用户较麻烦）、API 需要外币信用卡。</p>',
+
     related: ["ChatGPT", "Codex", "GPT", "LLM"]
   },
   {
@@ -1176,6 +1401,8 @@ const glossary = [
     letter: "G",
     definition: "科技巨头，AI 领域的强力竞争者。开发了 Gemini 模型系列、Google AI Studio、Gemini CLI、Antigravity 等。优势是生态整合（Firebase、Workspace、Cloud）和超长上下文窗口（1M Token）。",
     analogy: "Google 是 AI 行业的「三星」——技术实力强，生态完整，从免费到企业级全有覆盖。",
+    tutorial: '<p><strong>Google 在 AI 领域的布局：</strong>Google 拥有全球最丰富的 AI 人才和计算资源（TPU 芯片）。虽然 ChatGPT 先发制人，但 Google 追赶非常快。Gemini 2.5 Pro 在多项基准测试中与 GPT-5.6 互有胜负，尤其在超长上下文方面领先。</p><p><strong>AI 产品矩阵：</strong></p><ul><li><strong>Google AI Studio：</strong>网页端 AI 工作台，免费使用</li><li><strong>Gemini：</strong>AI 模型家族 + 聊天应用</li><li><strong>Gemini CLI：</strong>命令行 AI 编程 Agent</li><li><strong>Antigravity：</strong>IDE 插件</li><li><strong>Vertex AI：</strong>企业级 AI 平台</li></ul><p><strong>独特优势：</strong>Google 生态整合（Firebase、Gmail、Drive、YouTube）、1M Token 上下文窗口、免费额度慷慨、Google 账号直接登录。</p>',
+
     related: ["Google AI Studio", "Gemini"]
   },
   {
@@ -1187,6 +1414,8 @@ const glossary = [
     letter: "A",
     definition: "由前 OpenAI 员工创立的 AI 公司，主打「安全」和「对齐」。开发了 Claude 模型系列和 Claude Code（AI 编程 Agent）。在编码能力和长文本处理方面与 OpenAI 激烈竞争。",
     analogy: "Anthropic 是 AI 行业的「一加手机」——技术追求极致，粉丝忠诚度高，在特定领域（安全+编码）有独特优势。",
+    tutorial: '<p><strong>Anthropic 的起源：</strong>2021 年，一群 OpenAI 员工因对公司安全方向的分歧而离开，创建了 Anthropic。核心人物 Dario Amodei 和 Daniela Amodei 兄妹是前 OpenAI 研究 VP 和安全 VP。</p><p><strong>"安全"哲学：</strong>Anthropic 的核心卖点是"Constitutional AI"（宪法 AI）——用一套道德原则"宪法"约束 AI 的行为，确保 AI 安全、无害、诚实。这种理念吸引了很多重视 AI 安全的企业客户。</p><p><strong>核心产品：</strong></p><ul><li><strong>Claude：</strong>对话式 AI，编码能力突出</li><li><strong>Claude Code：</strong>编程 Agent，Codex 的主要竞争对手</li><li><strong>Claude API：</strong>面向开发者</li><li><strong>Agent Skills 标准：</strong>发起者，推动 Agent 技能生态标准化</li></ul>',
+
     related: ["Claude Code", "LLM", "OpenAI"]
   },
   {
@@ -1198,6 +1427,9 @@ const glossary = [
     letter: "C",
     definition: "OpenAI 的通用 AI 聊天产品，全球用户最多的 AI 应用。能回答问题、写文章、给建议、生成代码片段。有网页版、桌面版、App。免费版有限制，Plus $20/月解锁更多。Codex 模式已整合进 ChatGPT 桌面端。",
     analogy: "ChatGPT 是 AI 世界的「微信」——用户最多、功能最多、生态最完整。大多数人接触 AI 的第一步就是 ChatGPT。",
+    tutorial: '<p><strong>ChatGPT 的核心功能：</strong></p><ul><li><strong>对话：</strong>回答问题、解释概念、提供建议</li><li><strong>创作：</strong>写文章、邮件、诗歌、剧本</li><li><strong>编程：</strong>生成代码片段、解释代码、调试</li><li><strong>文件处理：</strong>上传 PDF/图片/文档让 AI 分析</li><li><strong>联网搜索：</strong>获取最新信息</li><li><strong>GPTs：</strong>自定义 AI 助手（可配置特定指令和知识）</li><li><strong>Codex 模式：</strong>桌面端集成了 Codex 的 Agent 能力，可以读写文件和运行命令</li></ul><p><strong>付费版本：</strong>免费版有限制（GPT-5.6 Luna、每天消息数限制）；Plus $20/月（解锁更多模型、更长上下文、优先访问）；Pro $200/月（无限使用、最高权限）。</p>',
+    howto: '<p><strong>ChatGPT 入门步骤：</strong></p><ol><li>访问 chatgpt.com，注册账号（需要邮箱或 Google/Apple 登录）</li><li>选择模型（左上角下拉菜单）</li><li>输入问题按回车，等待回复</li><li>上传文件：点击输入框旁的 📎 图标</li><li>开启联网：点击输入框旁的 🌐 图标</li><li>桌面端：下载 ChatGPT 桌面 App，可以开启 Codex 模式</li></ol><p>💡 <strong>技巧：</strong>使用"自定义指令"（设置→个性化）可以让 ChatGPT 记住你的偏好，如"用中文回答""回答简洁不要啰嗦"。</p>',
+
     related: ["OpenAI", "Codex", "LLM"]
   },
   {
@@ -1209,6 +1441,9 @@ const glossary = [
     letter: "C",
     definition: "OpenAI 的 AI 编程 Agent。在你的项目目录里读代码、写代码、运行命令、修 Bug、部署。CLI 开源，有桌面 App 和 IDE 插件。2026 年起改为 Token 计费，需 ChatGPT Plus $20/月。桌面端强制手机验证是已知痛点。",
     analogy: "Codex 是「雇来的程序员」——坐在你电脑前，看得懂你的项目，帮你改代码、修 Bug、部署上线。但是要付工资（$20/月），而且「入职审查」（手机验证）比较麻烦。",
+    tutorial: '<p><strong>Codex 是什么：</strong>Codex 是 OpenAI 推出的 AI 编程 Agent，定位是"AI 软件工程师"。与 ChatGPT 的"一问一答"不同，Codex 能自主完成整个编程任务——创建项目结构、写代码、运行测试、修 Bug、部署上线。</p><p><strong>三种使用方式：</strong>① CLI（命令行，开源，核心功能）；② 桌面 App（集成 ChatGPT，有 UI）；③ IDE 插件（VS Code/JetBrains）。</p><p><strong>已知痛点：</strong>桌面端强制手机号验证（非美国号码可能困难）；Token 计费不透明；偶尔会在简单任务上过度复杂化；长任务稳定性有待提升。</p>',
+    howto: '<p><strong>安装和使用的简单步骤：</strong></p><ol><li><strong>安装 CLI：</strong><code>npm install -g @openai/codex</code>（需要 Node.js）</li><li><strong>登录：</strong><code>codex login</code>，会打开浏览器完成 OpenAI 账号授权</li><li><strong>进入项目目录：</strong><code>cd my-project</code></li><li><strong>开始：</strong><code>codex "帮我创建一个 React 待办事项应用"</code></li><li><strong>交互：</strong>Codex 会展示计划 → 确认后执行 → 展示结果 → 你可以继续提修改需求</li></ol><p>⚠️ 需要 ChatGPT Plus $20/月订阅。首次使用建议从小任务开始，熟悉 Codex 的风格后再做复杂任务。</p>',
+
     related: ["OpenAI", "ChatGPT", "Vibe Coding", "AI Agent"]
   },
   {
@@ -1220,6 +1455,9 @@ const glossary = [
     letter: "G",
     definition: "Google 的浏览器端 AI 开发工作台。根据你的描述在浏览器里直接生成完整网页或 Android App，能一键部署到 Firebase。免费层够用，Google 账号即可。也支持 API Key 方式调用 Gemini 模型。",
     analogy: "Google AI Studio 是「在线工厂」——你说需求，它直接出货。免费、不用装任何东西、不用外币卡。适合做原型和 MVP。",
+    tutorial: '<p><strong>Google AI Studio 的独特定位：</strong>它是一个<strong>浏览器端</strong>的 AI 原型开发平台。不需要安装任何软件，不需要写一行代码配置环境，打开网页就能让 AI 帮你生成完整 Web 应用或 Android App，并一键部署。</p><p><strong>核心能力：</strong>① 根据文字描述生成完整网页/App；② 实时预览效果；③ 支持图片和文件上传；④ 一键部署到 Firebase；⑤ 支持 Gemini 全系列模型切换；⑥ 可调节 Temperature、安全过滤等参数。</p><p><strong>适用场景：</strong>原型快速开发、简单工具/小应用、非程序员做 MVP、学习 AI 开发。</p>',
+    howto: '<p><strong>5 分钟上手：</strong></p><ol><li>访问 aistudio.google.com，用 Google 账号登录</li><li>在输入框描述你想要的应用（如"做一个番茄钟计时器网页，深色主题"）</li><li>点击生成，AI 会直接输出可运行的网页</li><li>在右侧预览面板查看效果</li><li>满意后点击"部署"，获得可供他人访问的网址</li></ol><p>💡 <strong>技巧：</strong>Google AI Studio 完全免费使用，无需绑定信用卡。它的强项是"所见即所得"——改描述就能看到效果变化，适合快速迭代原型。</p>',
+
     related: ["Google (Alphabet)", "Gemini", "Vibe Coding"]
   },
   {
@@ -1231,6 +1469,9 @@ const glossary = [
     letter: "C",
     definition: "Anthropic 的 AI 编程 Agent，Codex 的直接竞争对手。功能相似——读代码、写代码、跑命令、修 Bug、部署。CLI 开源，支持 VS Code 和 JetBrains。需 Claude Pro $20/月。特色是 CLAUDE.md 指令文件和并行 Agent。",
     analogy: "Claude Code 和 Codex 是「两家竞争的外包公司」——干的活一样，但「企业文化」（安全理念、模型风格）不同。选哪个取决于你更信 OpenAI 还是 Anthropic。",
+    tutorial: '<p><strong>Claude Code vs Codex 对比：</strong>两者都是 AI 编程 Agent，功能高度重叠。主要差异：① Claude Code 的模型是 Claude（Anthropic 自家），Codex 用 GPT（OpenAI 自家）；② Claude Code 使用 CLAUDE.md 文件做项目级指令，Codex 用 AGENTS.md；③ Claude Code 更强调"安全审查"——执行危险操作前会有更明确的警告；④ Claude Code 的 Agent Skills 支持更原生。</p><p><strong>特色功能：</strong>① 并行 Agent——可以同时启动多个 Agent 处理不同子任务；② CLAUDE.md——放在项目根目录，告诉 Claude 项目规范和偏好；③ 原生 MCP 支持。</p>',
+    howto: '<p><strong>安装和开始：</strong></p><ol><li><strong>安装：</strong><code>npm install -g @anthropic-ai/claude-code</code></li><li><strong>登录：</strong><code>claude login</code>，完成 Anthropic 账号授权</li><li><strong>进入项目：</strong><code>cd my-project</code></li><li><strong>使用：</strong><code>claude "任务描述"</code></li></ol><p>⚠️ 需要 Claude Pro $20/月订阅。如果你已经有 ChatGPT Plus，Codex 可能更划算。如果你更看重编码质量和安全性，Claude Code 值得尝试。</p>',
+
     related: ["Anthropic", "Codex", "Vibe Coding", "AI Agent"]
   },
   {
@@ -1242,6 +1483,9 @@ const glossary = [
     letter: "G",
     definition: "Google 的 AI 模型家族，ChatGPT/GPT 的直接竞争对手。分多个版本：Pro（最强）、Flash（快速均衡）、Flash-Lite（最快最便宜）。特色是 1M Token 超长上下文窗口，一次能处理整本书。Google AI Studio 免费使用。",
     analogy: "Gemini 是 Google 造的「发动机」，GPT 是 OpenAI 造的「发动机」。Gemini 的优势是「油箱大」（1M 上下文），GPT 的优势是「马力强」（推理深度）。",
+    tutorial: '<p><strong>Gemini 模型家族详解：</strong></p><ul><li><strong>Gemini 2.5 Pro：</strong>最强大的模型。1M Token 上下文窗口，推理能力强。适合复杂分析、长文档处理、深度研究。</li><li><strong>Gemini 2.5 Flash：</strong>速度和性能的平衡。适合日常对话、中等复杂度任务。免费版默认模型。</li><li><strong>Gemini 2.5 Flash-Lite：</strong>最快最便宜。适合简单问答、分类、提取这类轻量任务。</li></ul><p><strong>Gemini 的独门绝技是超长上下文。</strong></p>',
+    howto: '<p><strong>使用 Gemini 的三种方式：</strong></p><ol><li><strong>免费聊天：</strong>gemini.google.com，Google 账号登录即用，免费</li><li><strong>API 调用：</strong>通过 Google AI Studio 获取 API Key，支持 Python/JS/curl 调用</li><li><strong>Gemini CLI：</strong><code>npm install -g @google/gemini-cli</code>，命令行 Agent 体验</li></ol><p>💡 <strong>超大上下文技巧：</strong>上传整本小说或长篇论文（PDF），让 Gemini 分析人物关系、总结章节、提取关键论点。</p>',
+
     related: ["Google (Alphabet)", "Google AI Studio", "LLM", "模型"]
   },
   {
@@ -1253,6 +1497,9 @@ const glossary = [
     letter: "G",
     definition: "GitHub 对 Agent 有三重身份：①身份证——很多 AI 工具用 GitHub OAuth 做登录验证（不需要自己建账号系统）；②文件柜——Agent 写的代码存在 GitHub 仓库里，带版本控制，改坏了能回退；③传送带——代码推到 GitHub 后自动触发测试、部署流水线（GitHub Actions）。",
     analogy: "GitHub 是 Agent 的「身份证+档案柜+快递员」——登录时确认身份，干活时存代码，干完活自动发货上线。",
+    tutorial: '<p><strong>GitHub 在 Agent 工作流中的完整角色：</strong></p><p><strong>① 身份认证层：</strong>GitHub OAuth 是最流行的 AI 工具登录方式。GitHub 账号几乎是程序员的标配，OAuth 接入简单，不需要自己搭账号系统。</p><p><strong>② 版本控制层：</strong>Agent 写的代码通过 Git 管理，每一次修改都有记录。这意味着——Agent 改坏了可以回退、Agent 做了什么一目了然（git diff）、多人+Agent 协作不冲突。</p><p><strong>③ 自动化流水线：</strong>GitHub Actions 让 Agent 写完代码后自动触发测试和部署，形成完整的 CI/CD 闭环。</p>',
+    notice: '💡 GitHub 对 AI Agent 的重要性怎么强调都不为过。如果你想高效使用 Agent，先把 GitHub 基本操作（仓库创建、Clone、Commit、Push）学会——半小时就能掌握。',
+
     related: ["AI Agent", "Codex", "Claude Code"]
   }
   ,
@@ -1265,6 +1512,9 @@ const glossary = [
     letter: "G",
     definition: "最流行的版本控制系统。记录文件的每一次修改，让你能随时回到历史版本、对比改动、多人同时协作不冲突。GitHub 本质上是 Git 的「云端存储服务」——Git 是工具，GitHub 是平台。你在本地用 Git 记录版本，推送到 GitHub 分享和备份。",
     analogy: "Git 是「时光机+草稿纸」——每次 Commit 就像拍一张快照，随时可以回到过去的任何一个版本。GitHub 是把这些快照存到云端的相册。",
+    tutorial: '<p><strong>Git 的核心概念深入：</strong></p><ul><li><strong>快照而非差异：</strong>大多数版本控制系统记录文件之间的差异，Git 直接记录每个版本的文件快照。这使得切换版本非常快。</li><li><strong>分布式：</strong>每个人的电脑上都有完整的仓库历史。即使 GitHub 挂了，你本地的一切还能正常工作。</li><li><strong>三区模型：</strong>工作目录（你写代码的地方）→ 暂存区（git add）→ 仓库（git commit，永久记录）。</li><li><strong>SHA-1 哈希：</strong>每个 Commit 由唯一的 40 位哈希值标识，保证不可篡改。</li></ul>',
+    howto: '<p><strong>Git 最常用命令速查：</strong></p><pre>git init              # 初始化一个新仓库\ngit clone [url]       # 克隆远程仓库到本地\ngit add .             # 暂存所有修改\ngit commit -m "消息"   # 提交暂存的文件\ngit push              # 推送到 GitHub\ngit pull              # 从 GitHub 拉取最新代码\ngit status            # 查看当前状态\ngit log               # 查看提交历史\ngit diff              # 查看具体改了什么\ngit checkout [commit] # 回到某个历史版本\ngit branch            # 查看/创建分支</pre>',
+
     related: ["GitHub", "Commit", "仓库"]
   },
   {
@@ -1276,6 +1526,9 @@ const glossary = [
     letter: "G",
     definition: "全球最大的代码托管平台，基于 Git。核心功能：①仓库（Repository）——存放代码项目；②版本控制——记录每次修改；③Pull Request——代码审查和讨论；④GitHub Actions——自动化测试/部署；⑤GitHub Pages——免费静态网站托管。被微软收购。几乎所有 AI Agent（Codex、Claude Code 等）都把 GitHub 作为默认的代码存放和协作平台。",
     analogy: "GitHub 是程序员界的「百度网盘+石墨文档」——既能存代码，又能多人协作，还能自动运行测试和部署。你这次的 AI 知识库网站就托管在 GitHub Pages 上。",
+    tutorial: '<p><strong>GitHub 为什么对 AI 开发者重要？</strong>GitHub 不仅是代码存放处，它是整个现代软件开发的中心枢纽。从 AI Agent 的角度看：① Agent 把 GitHub 当成"工作台"——创建仓库、提交代码、发起 PR；② GitHub 存储了全球最多的开源代码，是 AI 模型训练最重要的数据源之一；③ GitHub Copilot 是最大的 AI 编程辅助工具。</p><p><strong>GitHub 免费功能：</strong>无限公开/私有仓库、GitHub Actions 每月 2000 分钟、GitHub Pages 免费托管、Copilot 免费版（每月 2000 次补全）、社区协作（Issues、Discussions、Wiki）。</p>',
+    howto: '<p><strong>新手 10 分钟入门：</strong></p><ol><li>访问 github.com，注册账号（免费）</li><li>点击右上角 + → New repository → 输入仓库名 → Create</li><li>安装 GitHub Desktop（桌面版，免命令行）或直接学 Git 命令</li><li>Clone 仓库到本地 → 放入文件 → Commit → Push</li><li>你的代码就在 github.com/你的用户名/仓库名 上线了</li></ol><p>💡 GitHub 有中文界面（Settings → Language），对中文用户非常友好。</p>',
+
     related: ["Git", "仓库", "GitHub Actions", "GitHub Pages", "Pull Request", "GitHub Token"]
   },
   {
@@ -1287,6 +1540,9 @@ const glossary = [
     letter: "C",
     definition: "GitHub 上存放一个项目的「文件夹」。包含项目的所有代码文件、历史版本记录、分支等。每个仓库有独立的 URL（如 github.com/用户名/仓库名），可以设定为公开（Public）或私有（Private）。你的 AI 知识库就在 github.com/Sneak-nn/AI-glossary 这个仓库里。",
     analogy: "仓库 = 项目的「档案室」。里面不仅有当前的文件，还有从项目第一天到现在的每一版修改记录。公开仓库谁都能看，私有仓库只有你和授权的人能访问。",
+    tutorial: '<p><strong>仓库的结构：</strong>一个 Git 仓库包含：① 项目文件（你的代码、文档、图片）；② .git 隐藏文件夹（存储所有版本历史、分支信息）；③ README.md（项目说明文档，自动显示在仓库首页）；④ .gitignore（指定哪些文件不需要版本控制）；⑤ LICENSE（开源许可证）。</p><p><strong>公开 vs 私有：</strong>公开仓库全世界都能看到（适合开源项目、个人作品展示）；私有仓库只有你自己和授权的人能访问（适合公司项目、未完成的代码）。两者都是免费的。</p>',
+    howto: '<p><strong>创建和设置仓库：</strong></p><ol><li>GitHub 网页端：+ → New repository → 填写名称 → 选择公开/私有 → Create</li><li>本地已有代码：<code>git init</code> → <code>git add .</code> → <code>git commit -m "init"</code> → <code>git remote add origin [仓库URL]</code> → <code>git push -u origin main</code></li><li>建议勾选"Add a README file"、"Add .gitignore"、"Choose a license"（MIT 是最宽松的开源许可）</li></ol>',
+
     related: ["Git", "GitHub", "Commit", "Branch"]
   },
   {
@@ -1298,6 +1554,9 @@ const glossary = [
     letter: "C",
     definition: "Git 中的「保存」操作。每次 Commit 会记录：改了什么文件、谁改的、什么时候、为什么要改（提交信息）。每个 Commit 有唯一的 ID（如 b63f808），可以随时回到这个版本。在 AI 工作流中，Agent 每完成一个任务就会自动 Commit 一次。",
     analogy: "Commit = 打游戏时的「存档点」。每个存档记录了当时的完整状态，打 boss 前存一个，打输了就读档重来。代码改坏了，回退到上一个 Commit 就行。",
+    tutorial: '<p><strong>Commit 的内部结构：</strong>每次 Commit 保存：① 文件快照的哈希指针；② 作者信息（姓名+邮箱）；③ 时间戳；④ 提交信息；⑤ 父 Commit 的哈希（形成链式结构）。这就是为什么 Git 能快速定位到任意历史版本。</p><p><strong>好的提交信息规范：</strong>业界常用 Conventional Commits 格式：<code>类型: 简短描述</code>。如 <code>feat: 添加用户登录功能</code>、<code>fix: 修复搜索框中文输入问题</code>、<code>docs: 更新 README</code>。</p>',
+    howto: '<p><strong>实务操作：</strong></p><pre>git add index.html         # 暂存特定文件\ngit add .                  # 暂存所有改动\ngit commit -m "修复了搜索框 bug"\ngit commit -m "标题" -m "详细描述"\ngit log --oneline          # 查看精简版提交历史\ngit show [commit-hash]     # 查看某次提交的详细内容</pre><p>💡 频繁提交、小步提交是好习惯。每次逻辑上独立的改动就提交一次。</p>',
+
     related: ["Git", "仓库", "Push", "Branch"]
   },
   {
@@ -1309,6 +1568,9 @@ const glossary = [
     letter: "F",
     definition: "Git 中从主线上「分叉」出来的独立开发线。默认分支通常叫 main 或 master。做新功能时从 main 分出 feature 分支，改完测试通过后再合并回去。这样主分支始终保持稳定，不会因为开发中的代码搞崩整个项目。",
     analogy: "分支 = RPG 游戏的「平行剧情线」。主线是正式版，你可以开一条分支去尝试新的剧情（新功能），如果好玩就合并回主线，不好玩就删掉分支，主线不受任何影响。",
+    tutorial: '<p><strong>分支的工作流：</strong>典型的分支策略是 GitFlow 或 GitHub Flow。简化版：① main 分支永远是稳定可发布的版本；② 做新功能时从 main 切出 feature 分支；③ 在 feature 分支上开发、测试；④ 完成后发起 Pull Request 合并回 main；⑤ 合并后删除 feature 分支（保持清爽）。</p><p><strong>AI Agent 如何使用分支：</strong>Codex 和 Claude Code 在修改项目时会自动创建分支（如 codex/fix-search-bug），改完测试通过后自动创建 PR。你只需要 Review 代码变化，满意就点"Merge"。</p>',
+    howto: '<p><strong>分支操作命令：</strong></p><pre>git branch                    # 查看所有本地分支\ngit branch feature-login      # 创建新分支\ngit checkout feature-login    # 切换到该分支\ngit checkout -b new-feature   # 创建并切换（一步到位）\ngit merge feature-login       # 将 feature-login 合并到当前分支\ngit branch -d feature-login   # 删除已合并的分支\ngit push origin feature-login # 推送分支到 GitHub</pre>',
+
     related: ["Git", "Commit", "Pull Request"]
   },
   {
@@ -1320,6 +1582,9 @@ const glossary = [
     letter: "P",
     definition: "Git 中本地和远程仓库同步的两个操作。Push（推送）= 把本地修改上传到 GitHub，让别人能看到你的更新。Pull（拉取）= 把 GitHub 上别人的更新下载到本地，让你的代码保持最新。你刚才的「部署到 GitHub Pages」就是一次 Push 操作。",
     analogy: "Push = 把本地写好的文件发到云盘。Pull = 从云盘下载别人更新的文件。只有 Push 之后，GitHub Pages 才能看到你最新的网页代码。",
+    tutorial: '<p><strong>Push 和 Pull 的完整流程：</strong></p><p><strong>Push（本地→远程）：</strong>你在本地改代码 → git add → git commit → git push → 代码出现在 GitHub 上。只有 Push 之后，别人才能看到你的修改，GitHub Actions 才会触发。</p><p><strong>Pull（远程→本地）：</strong>别人在 GitHub 上更新了代码 → git pull → 代码同步到你本地。Pull 实际上是两个操作的组合：fetch（下载远程数据）+ merge（合并到你当前分支）。</p><p><strong>常见冲突：</strong>当两个人同时改了同一个文件的同一个位置，Git 不知道该听谁的——这就叫"冲突"（Conflict）。需要手动选择保留哪个版本。</p>',
+    howto: '<p><strong>Push/Pull 实战：</strong></p><pre>git push origin main        # 推送 main 分支到 origin（GitHub）\ngit push -u origin main     # 首次推送并建立跟踪关系\ngit push --force            # 强制推送（覆盖远程，谨慎使用！）\ngit pull origin main        # 从 GitHub 拉取 main 分支更新\ngit pull --rebase           # 拉取并变基（保持历史整洁）</pre><p>⚠️ <code>git push --force</code> 会覆盖远程仓库的历史，可能造成其他人的工作丢失。在共享分支上永远不要使用！</p>',
+
     related: ["Git", "GitHub", "Commit", "仓库"]
   },
   {
@@ -1331,6 +1596,9 @@ const glossary = [
     letter: "G",
     definition: "GitHub 的「临时密码」。因为 GitHub 不再支持直接用账号密码做 Git 操作和 API 调用，必须用 Token 代替密码来证明身份。Token 可以设定权限范围（如只允许操作仓库）、有效期（到期自动失效）。分两种：Fine-grained（细粒度，精确到单个仓库）和 Classic（经典，权限较宽）。用完应立即删除。",
     analogy: "GitHub Token = 酒店房卡。不是你的身份证（GitHub 账号密码），而是一张有期限、有权限范围的临时通行证。只能进你授权的房间（仓库），到期自动失效，丢了可以远程注销。你刚才给我的 ghp_ 开头的就是 Classic Token。",
+    tutorial: '<p><strong>Token 的两种类型详解：</strong></p><p><strong>Fine-grained Token（细粒度，推荐）：</strong>精确到单个仓库、只能访问特定资源、可设定过期时间。适合给 AI Agent 用——给它只能操作指定仓库的权限，就算泄露了损失也可控。</p><p><strong>Classic Token（经典）：</strong>权限范围粗粒度（如"所有仓库读写"）。虽然也可以设过期，但权限控制不如 Fine-grained 精确。兼容性好，某些旧工具可能只支持 Classic。</p><p><strong>Token 的生命周期：</strong>创建→使用→定期轮换→发现泄露立即吊销。</p>',
+    howto: '<p><strong>创建 Token 的步骤：</strong></p><ol><li>GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token</li><li>设置名称（如 "my-codex-agent"）、过期时间（建议 7-90 天）</li><li>选择仓库（Only select repositories → 选特定仓库）</li><li>设置权限（Repository permissions → Contents: Read and write）</li><li>生成后立即复制——离开页面后就看不到了！</li><li>使用：<code>git clone https://TOKEN@github.com/user/repo.git</code></li></ol>',
+
     related: ["GitHub", "GitHub API", "Push"]
   },
   {
@@ -1342,6 +1610,9 @@ const glossary = [
     letter: "G",
     definition: "GitHub 内置的自动化引擎。每当代码 Push 到仓库，可以自动触发一系列任务：运行测试、检查代码质量、构建应用、部署到服务器等。在 AI 工作流中，Agent 写完代码推送到 GitHub，Actions 自动验证代码没有 Bug，通过后自动部署上线——全程无需人工干预。",
     analogy: "GitHub Actions = 工厂的「自动化流水线」。你把原料（代码）放上传送带（Push），机器自动完成质检（跑测试）、包装（构建）、发货（部署）——你只需要在起点放料，终点收货。",
+    tutorial: '<p><strong>Actions 的工作机制：</strong>工作流文件（YAML 格式）放在 <code>.github/workflows/</code> 目录下。当触发事件发生时（Push、PR、定时等），GitHub 自动分配虚拟机执行工作流中定义的任务。</p><p><strong>一个典型 Actions 工作流包含：</strong>① 触发器（on: push）；② 运行环境（runs-on: ubuntu-latest）；③ 步骤序列（steps：checkout 代码→安装依赖→运行测试→构建→部署）。</p><p><strong>在 AI 工作流中的角色：</strong>AI Agent 写完代码 Push 到 GitHub → Actions 自动运行测试验证代码质量 → 通过后自动部署到服务器/Pages。</p>',
+    howto: '<p><strong>创建一个简单 Actions 工作流：</strong></p><ol><li>在项目根目录创建 <code>.github/workflows/deploy.yml</code></li><li>编写 YAML 配置（触发条件 + 执行步骤）</li><li>推送代码到 GitHub</li><li>在仓库的 Actions 标签页查看运行状态</li></ol><p>GitHub Marketplace 有大量现成的 Action 可以直接用（如 actions/checkout、actions/setup-node）。</p>',
+
     related: ["GitHub", "Push", "仓库", "GitHub Pages"]
   },
   {
@@ -1353,6 +1624,9 @@ const glossary = [
     letter: "G",
     definition: "GitHub 提供的免费静态网站托管服务。只要把 HTML/CSS/JS 文件放到仓库里，开启 GitHub Pages，就能获得一个 username.github.io/repo 的永久网址。适合托管个人主页、文档站、项目展示页。你的 AI 知识库（sneak-nn.github.io/AI-glossary）就部署在 GitHub Pages 上。",
     analogy: "GitHub Pages = 免费的「沿街店面」。你把做好的网页文件放到 GitHub 仓库里，GitHub 就给你一个门牌号（网址），全球任何人都能访问。不需要租服务器、不需要备案。",
+    tutorial: '<p><strong>GitHub Pages 的工作原理：</strong>当你开启 Pages 后，GitHub 会把指定分支（通常是 main 或 gh-pages）的指定目录（通常是 / 或 /docs）下的文件作为静态网站托管。每次 Push 到该分支，网站自动更新。</p><p><strong>支持的类型：</strong>① 纯静态（HTML/CSS/JS 直接托管）；② Jekyll 静态站点生成器（GitHub 内置支持）；③ 自定义域名（可以绑定你自己的 .com 域名）；④ HTTPS 自动提供（免费的 Let\'s Encrypt 证书）。</p><p><strong>局限：</strong>只能托管静态文件（不能运行 PHP/Node.js/Python 后端）；单个仓库大小限制 1GB；每月 100GB 带宽。</p>',
+    howto: '<p><strong>部署到 GitHub Pages 的步骤：</strong></p><ol><li>确保你的 HTML/CSS/JS 文件在仓库中</li><li>进入仓库 → Settings → Pages（左侧菜单）</li><li>Source 选择 "Deploy from a branch"</li><li>Branch 选择 main，文件夹选择 / (root)</li><li>点击 Save → 等待 1-2 分钟</li><li>访问 <code>https://你的用户名.github.io/仓库名</code></li></ol><p>💡 你的 AI 知识库网站（sneak-nn.github.io/AI-glossary）就是这么部署的——只有一个 index.html 文件，没有服务器，没有数据库，完全免费。</p>',
+
     related: ["GitHub", "仓库", "GitHub Actions", "Push"]
   },
   {
@@ -1364,6 +1638,9 @@ const glossary = [
     letter: "P",
     definition: "GitHub 上的代码审查和合并机制。开发者在分支上改完代码后，发起 Pull Request 请求将改动合并到主分支。PR 页面可以逐行查看改动、讨论、打回修改，审批通过后点一下按钮就合并。在 AI 工作流中，Agent 可以自动创建 PR，人类只需审查后点「合并」即可。",
     analogy: "Pull Request = 「提案+审批」流程。你改了一部分代码，发起 PR 就是提交提案，同事（或你自己）审阅后批准，代码才正式并入主线。就像写文章先发草稿给编辑审，通过了才发表。",
+    tutorial: '<p><strong>Pull Request 的完整流程：</strong>① 开发者在 feature 分支上完成开发 → ② Push 分支到 GitHub → ③ GitHub 上点击 "Compare & pull request" → ④ 填写 PR 标题和描述 → ⑤ 指定 Reviewer（代码审查者）→ ⑥ Reviewer 查看改动、评论、要求修改 → ⑦ 所有问题解决后 Reviewer 批准 → ⑧ 点击 Merge 合并到 main。</p><p><strong>PR 的社交属性：</strong>PR 不仅是合并代码的工具，更是团队沟通的场所。代码讨论、设计决策、知识分享都在 PR 页面发生。</p>',
+    howto: '<p><strong>创建你的第一个 PR：</strong></p><ol><li>创建并切换到新分支：<code>git checkout -b my-feature</code></li><li>做一些改动并提交</li><li>Push 分支：<code>git push origin my-feature</code></li><li>打开 GitHub 仓库页面，点击 "Compare & pull request"</li><li>写一个清晰的标题和描述</li><li>点击 "Create pull request"</li></ol><p>💡 即使是自己的个人项目，用 PR 流程也是个好习惯——给自己一个 Review 代码的机会。</p>',
+
     related: ["GitHub", "Branch", "Commit", "仓库"]
   },
   {
@@ -1375,6 +1652,9 @@ const glossary = [
     letter: "G",
     definition: "让程序直接操作 GitHub 的接口。通过 API 可以不用打开网页，用代码创建仓库、管理 Issues、触发 Actions、查询代码等。AI Agent（如 Codex）就通过 GitHub API 来读写仓库、创建 PR、查看代码变更。调用 API 需要用 GitHub Token 认证，按请求数量有频率限制。",
     analogy: "GitHub API = GitHub 的「后门通道」。普通人走前门（网页），程序走后门（API）。Agent 不可能打开浏览器手动点按钮，它通过 API 发送指令来操作 GitHub 上的一切。你刚才开启 GitHub Pages 就是我通过 API 一键完成的。",
+    tutorial: '<p><strong>GitHub API 能做什么？</strong>几乎 GitHub 网页上能做的所有操作，API 都能做：创建/删除仓库、管理 Issues 和 PR、触发 Actions、查询代码内容和历史、管理协作者和权限、获取用户信息。</p><p><strong>API 的限制：</strong>未认证请求每小时 60 次，使用 Token 认证后每小时 5000 次（普通用户）。GraphQL API（另一种 API 风格）有单独的速率限制。</p><p><strong>AI Agent 如何使用 GitHub API：</strong>Agent 通过 API 读取仓库结构、查看代码、创建 PR、监控 CI 状态——全程不需要打开浏览器。</p>',
+    howto: '<p><strong>用 curl 试试 GitHub API：</strong></p><pre># 查看自己的用户信息（需要 Token）\ncurl -H "Authorization: token ghp_xxx" \\\n     https://api.github.com/user\n\n# 查看某个仓库的信息（公开仓库不需要 Token）\ncurl https://api.github.com/repos/Sneak-nn/AI-glossary</pre><p>💡 推荐使用 GitHub CLI（<code>gh</code> 命令）作为 API 的更友好替代——功能相同但交互更简单。</p>',
+
     related: ["GitHub", "GitHub Token", "API", "AI Agent"]
   }
 ,
@@ -1388,6 +1668,9 @@ const glossary = [
     letter: "C",
     definition: "通过输入文字命令来与计算机交互的方式，区别于用鼠标点击的图形界面（GUI）。几乎所有 AI 编码工具（Codex、Claude Code、Gemini CLI）都提供 CLI 版本——在终端里输入命令，AI 直接帮你读写文件、运行代码。Windows 上是 CMD/PowerShell，macOS/Linux 上是 Terminal。",
     analogy: "CLI 是「对讲机」，GUI 是「触屏手机」。对讲机看起来原始，但说一句话就能完成复杂操作；触屏手机好看但要点很多下。程序员偏爱 CLI 因为它快、能组合、能自动化。",
+    tutorial: '<p><strong>CLI 为什么在 AI 时代更重要？</strong>AI Agent 全部通过 CLI 操作：Codex CLI、Claude Code CLI、Gemini CLI。原因是 CLI 是"文本进、文本出"——Agent 只需要输出命令文字，就能完成打开文件夹、创建文件、运行代码、安装依赖等所有操作。GUI 的鼠标点击和窗口操作对 AI 来说是巨大的障碍。</p><p><strong>主流终端：</strong>Windows 上常用 PowerShell（蓝色窗口）和 CMD（黑色窗口），macOS/Linux 上常用 Terminal（bash/zsh）。推荐 Windows 用户安装 Windows Terminal（微软官方，支持多标签、主题）。</p>',
+    howto: '<p><strong>CLI 入门 10 分钟：</strong></p><pre>dir          # Windows: 列出当前目录文件\nls           # macOS/Linux: 同上\ncd 文件夹名   # 进入文件夹\ncd ..        # 返回上级目录\nmkdir 名称   # 创建新文件夹\ntype nul > 文件名.txt  # Windows: 创建空文件\ntouch 文件名.txt        # macOS/Linux: 同上\ndel 文件名   # Windows: 删除文件\nrm 文件名    # macOS/Linux: 同上</pre><p>💡 刚开始学 CLI 别扭是正常的。就像打字从"看着键盘一个键一个键敲"到"盲打"一样，坚持用一周就会习惯。学 CLI 是为了更好地使用 AI Agent。</p>',
+
     related: ["AI Agent", "Codex", "Claude Code", "Git", "Terminal"]
   }
 ];
@@ -1573,14 +1856,66 @@ function openDetail(id) {
   document.getElementById('modalCategory').textContent = `${item.category} · ${item.importance === '核心' ? '核心概念' : item.importance === '进阶' ? '进阶概念' : '了解即可'}`;
   document.getElementById('modalDefinition').textContent = item.definition;
   document.getElementById('modalAnalogy').textContent = item.analogy;
+  document.getElementById('modalAnalogyWrap').style.display = item.analogy ? 'block' : 'none';
   const relatedDiv = document.getElementById('modalRelated');
   relatedDiv.innerHTML = item.related.map(r => {
     const target = glossary.find(g => g.id === r);
     return target ? `<button class="modal-related-chip" onclick="openDetail('${r}')">${target.term}</button>` : '';
   }).join('');
-  document.getElementById('modalAnalogyWrap').style.display = item.analogy ? 'block' : 'none';
+
+  // Tutorial panel
+  const tutorialWrap = document.getElementById('modalTutorialWrap');
+  const hasTutorial = item.tutorial && item.tutorial.trim();
+  if (hasTutorial) {
+    document.getElementById('modalTutorialExplanation').innerHTML = item.tutorial;
+    const howto = item.howto;
+    const howtoSection = document.getElementById('modalTutorialHowtoSection');
+    if (howto && howto.trim()) {
+      document.getElementById('modalTutorialHowto').innerHTML = howto;
+      howtoSection.style.display = 'block';
+    } else {
+      howtoSection.style.display = 'none';
+    }
+    const notice = item.notice;
+    const noticeEl = document.getElementById('modalTutorialNotice');
+    if (notice && notice.trim()) {
+      noticeEl.textContent = notice;
+      noticeEl.style.display = 'block';
+    } else {
+      noticeEl.style.display = 'none';
+    }
+    document.getElementById('modalVersionToggle').style.display = 'flex';
+  } else {
+    tutorialWrap.classList.remove('show');
+    document.getElementById('modalVersionToggle').style.display = 'none';
+  }
+
+  // Reset to basic view
+  switchVersion('basic');
+
   modalOverlay.classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function switchVersion(version) {
+  const btns = document.querySelectorAll('.modal-version-btn');
+  btns.forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.modal-version-btn[data-version="${version}"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  const defWrap = document.getElementById('modalDefWrap');
+  const analogyWrap = document.getElementById('modalAnalogyWrap');
+  const tutorialWrap = document.getElementById('modalTutorialWrap');
+
+  if (version === 'basic') {
+    defWrap.classList.remove('hide');
+    if (analogyWrap.style.display !== 'none') analogyWrap.classList.remove('hide');
+    tutorialWrap.classList.remove('show');
+  } else {
+    defWrap.classList.add('hide');
+    analogyWrap.classList.add('hide');
+    tutorialWrap.classList.add('show');
+  }
 }
 
 function closeModal() {
