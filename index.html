@@ -685,6 +685,20 @@ body {
   stroke-width: 1;
 }
 
+
+.tab-section { display: none; }
+.tab-section.active { display: block; }
+.tutorial-step { display: flex; gap: 16px; margin-bottom: 28px; align-items: flex-start; }
+.tutorial-step-num { width: 32px; height: 32px; background: var(--accent-dim); color: var(--accent-text); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.875rem; flex-shrink: 0; font-family: var(--font-display); }
+.tutorial-step-body h4 { font-size: 0.9375rem; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
+.tutorial-step-body p { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.65; }
+.tutorial-code { background: #0D1117; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px 18px; font-family: var(--font-mono); font-size: 0.8125rem; color: #E6EDF3; margin: 8px 0 0; overflow-x: auto; white-space: pre-wrap; }
+.tutorial-code .cmd { color: #7EE787; }
+.tutorial-code .path { color: #79C0FF; }
+.tutorial-code .comment { color: #8B949E; }
+.tutorial-note { background: var(--warning-bg); border: 1px solid rgba(250,204,21,0.2); border-radius: var(--radius-md); padding: 12px 16px; margin-top: 20px; font-size: 0.8125rem; color: var(--text-secondary); }
+
+
 /* ── Footer ── */
 .footer {
   border-top: 1px solid var(--border);
@@ -758,10 +772,10 @@ body {
       AI 知识库
     </a>
     <div class="nav-links">
-      <a href="#categories" class="nav-link active" data-nav="categories">分类</a>
-      <a href="#az" class="nav-link" data-nav="az">A-Z</a>
-      <a href="#compare" class="nav-link" data-nav="compare">对比</a>
-      <a href="#graph" class="nav-link" data-nav="graph">图谱</a>
+      <a href="#" class="nav-link active" data-nav="categories">分类</a>
+      <a href="#" class="nav-link" data-nav="az">A-Z</a>
+      <a href="#" class="nav-link" data-nav="graph">图谱</a>
+      <a href="#" class="nav-link" data-nav="tutorial">教程</a>
     </div>
   </div>
 </nav>
@@ -795,7 +809,7 @@ body {
 </header>
 
 <!-- Category Section -->
-<section class="section" id="categories">
+<section class="section tab-section active" id="categories">
   <div class="section-header">
     <h2>📂 分类浏览</h2>
     <span class="count" id="catCount"></span>
@@ -806,7 +820,7 @@ body {
 <hr class="section-divider">
 
 <!-- A-Z Section -->
-<section class="section" id="az">
+<section class="section tab-section" id="az">
   <div class="section-header">
     <h2>🔤 A-Z 索引</h2>
     <span class="count" id="azCount"></span>
@@ -817,19 +831,8 @@ body {
 
 <hr class="section-divider">
 
-<!-- Comparison Section -->
-<section class="section" id="compare">
-  <div class="section-header">
-    <h2>📊 工具对比速查表</h2>
-    <span class="count" id="compareCount"></span>
-  </div>
-  <div class="table-wrap" id="compareTable"></div>
-</section>
-
-<hr class="section-divider">
-
 <!-- Knowledge Graph -->
-<section class="section" id="graph">
+<section class="section tab-section" id="graph">
   <div class="section-header">
     <h2>🔗 概念关联图谱</h2>
     <span class="count">点击节点查看详情</span>
@@ -840,6 +843,86 @@ body {
 </section>
 
 <!-- Footer -->
+
+<!-- Tutorial Section -->
+<section class="section tab-section" id="tutorial">
+  <div class="section-header">
+    <h2>📖 教程：如何下载和使用别人的 Skill</h2>
+  </div>
+
+  <div class="cat-card" style="margin-bottom:24px;cursor:default">
+    <p style="font-size:0.9375rem;color:var(--text-secondary);line-height:1.7">
+      <strong style="color:var(--text-primary)">Skill（技能包）</strong> 是 AI Agent 的「专业知识模块」。别人写好并分享的 Skill，你可以下载安装到自己的 Agent 里，让它瞬间获得新能力——比如自动部署、生成测试、对接数据库等。以下是通用流程：
+    </p>
+  </div>
+
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">1</div>
+    <div class="tutorial-step-body">
+      <h4>找到 Skill 市场或仓库</h4>
+      <p>大多数 AI 编码工具都有官方的 Skill/MCP 市场：</p>
+      <p style="margin-top:6px">
+        • <strong>Claude Code：</strong> <code style="color:var(--accent-text)">/plugin marketplace</code> 或访问 GitHub 上的 awesome-claude-code<br>
+        • <strong>Codex：</strong> 内置插件商店，在 Codex 设置 → Plugins 中浏览<br>
+        • <strong>Cursor/Windsurf：</strong> 扩展市场搜索相应插件<br>
+        • <strong>GitHub：</strong> 搜索 <code style="color:var(--accent-text)">claude-code-plugin</code> 或 <code style="color:var(--accent-text)">codex-skill</code>
+      </p>
+    </div>
+  </div>
+
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">2</div>
+    <div class="tutorial-step-body">
+      <h4>下载 / 安装 Skill</h4>
+      <p>以 <strong>Claude Code</strong> 为例，安装官方市场中的 Skill：</p>
+      <div class="tutorial-code"><span class="comment"># 在 Claude Code 对话中输入</span>
+<span class="cmd">/plugin</span> install <span class="path">@anthropic/agent-browser</span>
+
+<span class="comment"># 或从 GitHub 直接安装</span>
+<span class="cmd">/plugin</span> install <span class="path">github:username/skill-repo</span></div>
+      <p style="margin-top:8px">以 <strong>Codex</strong> 为例：</p>
+      <div class="tutorial-code"><span class="comment"># Codex 设置 → Plugins → 搜索 → Install</span>
+<span class="comment"># 或手动：将 Skill 文件夹放到项目根目录的 .codex/skills/ 下</span>
+mkdir -p <span class="path">.codex/skills/my-skill</span>
+<span class="comment"># skill 配置自动生效</span></div>
+    </div>
+  </div>
+
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">3</div>
+    <div class="tutorial-step-body">
+      <h4>配置和启用</h4>
+      <p>安装后通常需要在配置文件中声明：</p>
+      <div class="tutorial-code"><span class="comment"># CLAUDE.md（Claude Code）</span>
+<span class="comment">## Skills</span>
+- <span class="cmd">/deploy</span>  <span class="comment">— 自动部署到 Vercel</span>
+- <span class="cmd">/test</span>   <span class="comment">— 运行测试套件</span>
+
+<span class="comment"># AGENTS.md（Codex / 通用）</span>
+<span class="comment">## Skills</span>
+- <span class="cmd">code-review</span> <span class="comment">— PR 审查助手</span></div>
+    </div>
+  </div>
+
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4</div>
+    <div class="tutorial-step-body">
+      <h4>验证 Skill 是否生效</h4>
+      <p>安装后在 Agent 对话中直接调用：</p>
+      <div class="tutorial-code"><span class="comment"># Claude Code</span>
+<span class="cmd">/deploy</span>
+
+<span class="comment"># Codex</span>
+<span class="cmd">@skill</span> deploy</div>
+      <p style="margin-top:8px">如果 Skill 有自动触发条件（Hook），它在满足条件时自动执行，无需手动调用。</p>
+    </div>
+  </div>
+
+  <div class="tutorial-note">
+    <strong>💡 提示：</strong>Skill 本质是一个包含指令文件和脚本的文件夹。手动安装只需把它放到 Agent 的 skills 目录下。大部分开源 Skill 在 GitHub 上可以找到——搜索关键词「claude-code-skill」「codex-plugin」即可。
+  </div>
+</section>
+
 <footer class="footer">
   <p>AI 知识库 · 扫盲参考手册 · 数据驱动，随 AI 发展持续更新</p>
 </footer>
@@ -1294,7 +1377,21 @@ const glossary = [
     analogy: "GitHub API = GitHub 的「后门通道」。普通人走前门（网页），程序走后门（API）。Agent 不可能打开浏览器手动点按钮，它通过 API 发送指令来操作 GitHub 上的一切。你刚才开启 GitHub Pages 就是我通过 API 一键完成的。",
     related: ["GitHub", "GitHub Token", "API", "AI Agent"]
   }
+,
+
+  {
+    id: "cli",
+    term: "CLI",
+    fullName: "Command Line Interface · 命令行界面",
+    category: "基础概念",
+    importance: "核心",
+    letter: "C",
+    definition: "通过输入文字命令来与计算机交互的方式，区别于用鼠标点击的图形界面（GUI）。几乎所有 AI 编码工具（Codex、Claude Code、Gemini CLI）都提供 CLI 版本——在终端里输入命令，AI 直接帮你读写文件、运行代码。Windows 上是 CMD/PowerShell，macOS/Linux 上是 Terminal。",
+    analogy: "CLI 是「对讲机」，GUI 是「触屏手机」。对讲机看起来原始，但说一句话就能完成复杂操作；触屏手机好看但要点很多下。程序员偏爱 CLI 因为它快、能组合、能自动化。",
+    related: ["AI Agent", "Codex", "Claude Code", "Git", "Terminal"]
+  }
 ];
+
 
 const tools = [
   { name: "ChatGPT", company: "OpenAI", type: "对话式 AI", chat: true, code: "生成片段", files: false, cmds: false, deploy: false, free: "有免费版", price: "$20/月", install: false, phone: "注册可能需要" },
@@ -1316,7 +1413,7 @@ document.getElementById('statCats').textContent = categories.length;
 document.getElementById('statTools').textContent = tools.length;
 document.getElementById('catCount').textContent = `共 ${glossary.length} 个词条`;
 document.getElementById('azCount').textContent = `${glossary.length} 个词条`;
-document.getElementById('compareCount').textContent = `${tools.length} 款工具`;
+
 
 // Category grid
 const catGrid = document.getElementById('catGrid');
@@ -1404,32 +1501,6 @@ function renderAZ(categoryFilter = null, letterFilter = null) {
 }
 
 renderAZ();
-
-// Comparison table
-const compareTable = document.getElementById('compareTable');
-let tableHTML = `<table class="compare-table">
-  <thead><tr>
-    <th>工具</th><th>公司</th><th>类型</th><th>聊天</th><th>写代码</th><th>操作文件</th><th>运行命令</th><th>部署</th><th>免费</th><th>付费起步</th><th>需要安装</th><th>手机验证</th>
-  </tr></thead><tbody>`;
-tools.forEach(t => {
-  const yn = (v) => v === true ? '<span class="check">✅</span>' : v === false ? '<span class="cross">—</span>' : `<span>${v}</span>`;
-  tableHTML += `<tr>
-    <td><strong>${t.name}</strong></td>
-    <td>${t.company}</td>
-    <td>${t.type}</td>
-    <td>${yn(t.chat)}</td>
-    <td>${yn(t.code)}</td>
-    <td>${yn(t.files)}</td>
-    <td>${yn(t.cmds)}</td>
-    <td>${yn(t.deploy)}</td>
-    <td>${t.free}</td>
-    <td>${t.price}</td>
-    <td>${t.install ? '<span class="warn">需要</span>' : '<span class="check">不需要</span>'}</td>
-    <td>${t.phone === '不要' ? '<span class="check">✅ 不要</span>' : '<span class="warn">' + t.phone + '</span>'}</td>
-  </tr>`;
-});
-tableHTML += '</tbody></table>';
-compareTable.innerHTML = tableHTML;
 
 // Knowledge graph
 function renderGraph() {
@@ -1557,17 +1628,19 @@ searchInput.addEventListener('input', () => {
   document.getElementById('az').scrollIntoView({ behavior: 'smooth' });
 });
 
-// Nav active state
+// Tab switching
 const navLinks = document.querySelectorAll('.nav-link');
-const sections = ['categories', 'az', 'compare', 'graph'];
-window.addEventListener('scroll', () => {
-  let current = 'categories';
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top < 120) current = id;
-  });
-  navLinks.forEach(link => {
-    link.classList.toggle('active', link.dataset.nav === current);
+const tabSections = document.querySelectorAll('.tab-section');
+navLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = link.dataset.nav;
+    navLinks.forEach(l => l.classList.remove('active'));
+    link.classList.add('active');
+    tabSections.forEach(s => s.classList.remove('active'));
+    const targetSection = document.getElementById(target);
+    if (targetSection) targetSection.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 });
 
